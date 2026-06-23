@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session 3: FastAPI Basics - FastAPI Course</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .duration {
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+        
+        nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav a {
+            background: white;
+            color: #667eea;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            border: 2px solid #667eea;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        nav a:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            scroll-margin-top: 100px;
+        }
+        
+        section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        section h3 {
+            color: #764ba2;
+            font-size: 1.4em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        section h4 {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .learning-objectives {
+            background: #e7f3ff;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        
+        .learning-objectives h3 {
+            margin-top: 0;
+        }
+        
+        .learning-objectives li {
+            margin: 8px 0;
+            margin-left: 20px;
+        }
+        
+        .example-box {
+            background: #f5f5f5;
+            border-left: 4px solid #764ba2;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .example-box h4 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+        
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-family: monospace;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .comparison-table tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .key-concept {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .key-concept strong {
+            color: #ff6b6b;
+        }
+        
+        .time-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .time-box strong {
+            color: #856404;
+        }
+        
+        .breadcrumb {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background-color: #fff59d;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        
+        .summary-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .summary-box h4 {
+            color: #1565c0;
+            margin-bottom: 10px;
+        }
+        
+        .installation-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .installation-box h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .warning-box {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box h4 {
+            color: #c62828;
+            margin-bottom: 10px;
+        }
+        
+        .tip-box {
+            background: #e0f2f1;
+            border-left: 4px solid #009688;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .tip-box h4 {
+            color: #00695c;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border-top: 2px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ Session 3: FastAPI Basics</h1>
+            <p>Building Your First API with FastAPI, Routes, and Documentation</p>
+            <div class="duration">⏱️ 2 Hours</div>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#objectives">Learning Objectives</a></li>
+                <li><a href="#what-is-fastapi">What is FastAPI</a></li>
+                <li><a href="#installation">Installation & Setup</a></li>
+                <li><a href="#routes">Routes and Endpoints</a></li>
+                <li><a href="#uvicorn">Running with Uvicorn</a></li>
+                <li><a href="#docs">Auto-generated Docs</a></li>
+                <li><a href="#summary">Summary</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <div class="breadcrumb">FastAPI Course > Session 3 > FastAPI Basics</div>
+            
+            <!-- Learning Objectives -->
+            <section id="objectives">
+                <h2>📚 Learning Objectives</h2>
+                <div class="learning-objectives">
+                    <h3>By the end of this session, you will be able to:</h3>
+                    <ul>
+                        <li>Understand what FastAPI is and why it's a game-changer for API development</li>
+                        <li>Install FastAPI and required dependencies correctly</li>
+                        <li>Create basic routes and endpoints for different HTTP methods</li>
+                        <li>Use path parameters and query parameters in routes</li>
+                        <li>Run your API server using Uvicorn</li>
+                        <li>Access and understand auto-generated API documentation</li>
+                        <li>Test your endpoints using Swagger UI and ReDoc</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- What is FastAPI -->
+            <section id="what-is-fastapi">
+                <h2>⚡ What is FastAPI?</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 15px;">
+                    <strong>FastAPI</strong> is a modern Python web framework for building APIs quickly and efficiently. It's designed to be fast (on par with Node.js and Go), easy to use, and produce production-ready code with minimal effort.
+                </p>
+                
+                <h3>Key Features of FastAPI</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li><strong>🚀 Speed:</strong> One of the fastest Python frameworks (comparable to NodeJS and Go)</li>
+                    <li><strong>⚡ Easy:</strong> Intuitive syntax, easy to learn and use</li>
+                    <li><strong>📚 Auto Documentation:</strong> Automatic interactive API docs (Swagger UI, ReDoc)</li>
+                    <li><strong>🔍 Type Hints:</strong> Full support for Python type hints</li>
+                    <li><strong>✅ Data Validation:</strong> Built-in validation using Pydantic</li>
+                    <li><strong>🔐 Security:</strong> OAuth2, JWT, and API key support built-in</li>
+                    <li><strong>⚙️ Modern Python:</strong> Uses async/await for high performance</li>
+                    <li><strong>🧪 Testing Friendly:</strong> Easy to test with provided TestClient</li>
+                </ul>
+                
+                <h3>FastAPI vs Other Frameworks</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Framework</th>
+                            <th>Speed</th>
+                            <th>Ease of Use</th>
+                            <th>Documentation</th>
+                            <th>Learning Curve</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>FastAPI</strong></td>
+                            <td>Very Fast ⚡⚡⚡</td>
+                            <td>Easy 😊</td>
+                            <td>Auto Generated ✅</td>
+                            <td>Low 📈</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Flask</strong></td>
+                            <td>Fast ⚡</td>
+                            <td>Very Easy 😊😊</td>
+                            <td>Manual ❌</td>
+                            <td>Very Low 📈</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Django</strong></td>
+                            <td>Medium ⚡</td>
+                            <td>Complex 😑</td>
+                            <td>Excellent ✅</td>
+                            <td>High 📊</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Starlette</strong></td>
+                            <td>Very Fast ⚡⚡⚡</td>
+                            <td>Moderate 😐</td>
+                            <td>Manual ❌</td>
+                            <td>Medium 📈</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Built on Starlette & Pydantic</h3>
+                <p style="margin: 15px 0;">FastAPI is built on top of two powerful libraries:</p>
+                <div class="example-box">
+                    <h4>🌟 Starlette</h4>
+                    <p>A lightweight, high-performance ASGI web framework. Provides the core web functionality that FastAPI uses.</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 Pydantic</h4>
+                    <p>A data validation library using Python type hints. Automatically validates request data and converts it to Python objects.</p>
+                </div>
+                
+                <h3>FastAPI Simplicity: Hello World</h3>
+                <p>Creating your first API endpoint is incredibly simple:</p>
+                <div class="code-block">
+from fastapi import FastAPI<br>
+<br>
+app = FastAPI()<br>
+<br>
+@app.get("/")<br>
+def read_root():<br>
+&nbsp;&nbsp;return {"message": "Hello, World!"}
+                </div>
+                
+                <p>That's it! This creates a working API with:</p>
+                <ul style="margin-left: 20px;">
+                    <li>✅ A GET endpoint at `/`</li>
+                    <li>✅ Returns JSON response</li>
+                    <li>✅ Automatic documentation at `/docs`</li>
+                    <li>✅ Type safe</li>
+                </ul>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~10 minutes spent. About 1 hour 50 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- Installation & Setup -->
+            <section id="installation">
+                <h2>📦 Installation & Setup</h2>
+                
+                <h3>Step 1: Prerequisites</h3>
+                <p>Make sure you have Python 3.7+ installed:</p>
+                <div class="code-block">
+python --version<br>
+# or<br>
+python3 --version
+                </div>
+                
+                <h3>Step 2: Create a Project Directory</h3>
+                <div class="code-block">
+mkdir my-fastapi-project<br>
+cd my-fastapi-project
+                </div>
+                
+                <h3>Step 3: Create a Virtual Environment (Recommended)</h3>
+                <p>Virtual environments isolate dependencies for your project:</p>
+                
+                <div class="code-block">
+# On Windows<br>
+python -m venv venv<br>
+venv\Scripts\activate<br>
+<br>
+# On macOS/Linux<br>
+python3 -m venv venv<br>
+source venv/bin/activate
+                </div>
+                
+                <p>You should see <span class="highlight">(venv)</span> in your terminal indicating the virtual environment is active.</p>
+                
+                <h3>Step 4: Install FastAPI and Uvicorn</h3>
+                <div class="installation-box">
+                    <h4>📥 Installing Required Packages</h4>
+                    <p>Install FastAPI (the framework) and Uvicorn (the server):</p>
+                    <div class="code-block">
+pip install fastapi<br>
+pip install uvicorn[standard]
+                    </div>
+                    
+                    <p>Or install both together:</p>
+                    <div class="code-block">
+pip install fastapi uvicorn[standard]
+                    </div>
+                </div>
+                
+                <h3>Step 5: Verify Installation</h3>
+                <div class="code-block">
+pip list | grep -i fastapi<br>
+pip list | grep -i uvicorn
+                </div>
+                
+                <p>You should see both packages listed with their versions.</p>
+                
+                <h3>Optional: Install Additional Tools</h3>
+                <p>For better development experience, consider installing:</p>
+                <div class="code-block">
+# For development and testing<br>
+pip install pytest<br>
+pip install httpx  # for testing FastAPI apps<br>
+<br>
+# For code formatting<br>
+pip install black<br>
+pip install pylint
+                </div>
+                
+                <div class="tip-box">
+                    <h4>💡 Pro Tip: requirements.txt</h4>
+                    <p>After installing packages, save them to requirements.txt for easy sharing:</p>
+                    <div class="code-block">
+pip freeze > requirements.txt<br>
+<br>
+# Others can install with:<br>
+pip install -r requirements.txt
+                    </div>
+                </div>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~15 minutes spent. About 1 hour 45 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- Routes and Endpoints -->
+            <section id="routes">
+                <h2>🛣️ Routes and Endpoints: Building Your API</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 15px;">
+                    A <strong>route</strong> is a URL path in your API. An <strong>endpoint</strong> is a route combined with an HTTP method (GET, POST, etc.).
+                </p>
+                
+                <h3>Basic Route Syntax</h3>
+                <div class="example-box">
+                    <h4>🎯 Simple GET Endpoint</h4>
+                    <div class="code-block">
+from fastapi import FastAPI<br>
+<br>
+app = FastAPI()<br>
+<br>
+@app.get("/items")<br>
+def get_items():<br>
+&nbsp;&nbsp;return {"items": ["item1", "item2", "item3"]}
+                    </div>
+                    <p><strong>Breaking it down:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li><span class="highlight">@app.get("/items")</span> - Decorator: HTTP GET method on /items route</li>
+                        <li><span class="highlight">def get_items():</span> - Function that handles the request</li>
+                        <li><span class="highlight">return {...}</span> - Automatically converted to JSON response</li>
+                    </ul>
+                </div>
+                
+                <h3>All HTTP Methods in FastAPI</h3>
+                <div class="code-block">
+# GET - Retrieve data<br>
+@app.get("/items")<br>
+def read_items(): ...<br>
+<br>
+# POST - Create data<br>
+@app.post("/items")<br>
+def create_item(): ...<br>
+<br>
+# PUT - Replace entire resource<br>
+@app.put("/items/{item_id}")<br>
+def update_item(item_id: int): ...<br>
+<br>
+# DELETE - Remove data<br>
+@app.delete("/items/{item_id}")<br>
+def delete_item(item_id: int): ...<br>
+<br>
+# PATCH - Partial update<br>
+@app.patch("/items/{item_id}")<br>
+def patch_item(item_id: int): ...<br>
+<br>
+# HEAD - Like GET but no body<br>
+@app.head("/items")<br>
+def head_items(): ...<br>
+<br>
+# OPTIONS - Describe options<br>
+@app.options("/items")<br>
+def options_items(): ...
+                </div>
+                
+                <h3>Path Parameters: Dynamic Routes</h3>
+                <p>Use curly braces <span class="highlight">{param}</span> to create dynamic routes:</p>
+                
+                <div class="example-box">
+                    <h4>📍 Basic Path Parameter</h4>
+                    <div class="code-block">
+@app.get("/users/{user_id}")<br>
+def get_user(user_id: int):<br>
+&nbsp;&nbsp;return {"user_id": user_id, "name": "John Doe"}
+                    </div>
+                    <p><strong>What happens:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Request: <span class="highlight">GET /users/123</span></li>
+                        <li>Parameter: <span class="highlight">user_id = 123</span></li>
+                        <li>Type validation: Must be an integer, FastAPI converts automatically</li>
+                        <li>Response: <span class="highlight">{"user_id": 123, "name": "John Doe"}</span></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>📍 Multiple Path Parameters</h4>
+                    <div class="code-block">
+@app.get("/users/{user_id}/posts/{post_id}")<br>
+def get_user_post(user_id: int, post_id: int):<br>
+&nbsp;&nbsp;return {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"user_id": user_id,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"post_id": post_id,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"content": "This is a sample post"<br>
+&nbsp;&nbsp;}
+                    </div>
+                    <p>Request: <span class="highlight">GET /users/123/posts/456</span></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>📍 String Path Parameters</h4>
+                    <div class="code-block">
+@app.get("/files/{file_path}")<br>
+def read_file(file_path: str):<br>
+&nbsp;&nbsp;return {"file_path": file_path}
+                    </div>
+                    <p>Request: <span class="highlight">GET /files/documents/report.pdf</span></p>
+                    <p>Note: String parameters accept slashes for file paths</p>
+                </div>
+                
+                <h3>Query Parameters: Filtering & Options</h3>
+                <p>Query parameters are optional filters passed in the URL after <span class="highlight">?</span>:</p>
+                
+                <div class="example-box">
+                    <h4>❓ Basic Query Parameter</h4>
+                    <div class="code-block">
+@app.get("/items")<br>
+def get_items(skip: int = 0, limit: int = 10):<br>
+&nbsp;&nbsp;return {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"skip": skip,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"limit": limit,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"items": ["item1", "item2", ...]<br>
+&nbsp;&nbsp;}
+                    </div>
+                    <p><strong>Examples:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>GET /items → skip=0, limit=10 (defaults)</li>
+                        <li>GET /items?skip=5 → skip=5, limit=10</li>
+                        <li>GET /items?skip=5&limit=20 → skip=5, limit=20</li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>❓ Required Query Parameter</h4>
+                    <div class="code-block">
+@app.get("/search")<br>
+def search(q: str, category: str = "all"):<br>
+&nbsp;&nbsp;return {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"query": q,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"category": category,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"results": [...]<br>
+&nbsp;&nbsp;}
+                    </div>
+                    <p><strong>Examples:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>GET /search?q=python → works</li>
+                        <li>GET /search → ERROR (q is required)</li>
+                        <li>GET /search?q=python&category=courses → works</li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>❓ Query Parameter with Type Validation</h4>
+                    <div class="code-block">
+@app.get("/products")<br>
+def get_products(skip: int = 0, limit: int = 10, in_stock: bool = True):<br>
+&nbsp;&nbsp;return {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"skip": skip,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"limit": limit,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"in_stock": in_stock<br>
+&nbsp;&nbsp;}
+                    </div>
+                    <p><strong>Examples:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>GET /products?in_stock=true → in_stock = True</li>
+                        <li>GET /products?in_stock=false → in_stock = False</li>
+                        <li>GET /products?skip=10&limit=5&in_stock=true → all work</li>
+                    </ul>
+                </div>
+                
+                <h3>Request Body: Sending Data</h3>
+                <p>For POST, PUT, PATCH requests, you send data in the request body. Use Pydantic models:</p>
+                
+                <div class="example-box">
+                    <h4>📤 Creating a Pydantic Model</h4>
+                    <div class="code-block">
+from fastapi import FastAPI<br>
+from pydantic import BaseModel<br>
+<br>
+class Item(BaseModel):<br>
+&nbsp;&nbsp;name: str<br>
+&nbsp;&nbsp;price: float<br>
+&nbsp;&nbsp;description: str = "No description"  # Optional<br>
+&nbsp;&nbsp;is_available: bool = True<br>
+<br>
+@app.post("/items")<br>
+def create_item(item: Item):<br>
+&nbsp;&nbsp;return {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"message": "Item created",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"item": item<br>
+&nbsp;&nbsp;}
+                    </div>
+                    
+                    <p><strong>Request Body (JSON):</strong></p>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"name": "Laptop",<br>
+&nbsp;&nbsp;"price": 999.99,<br>
+&nbsp;&nbsp;"description": "High-performance laptop"<br>
+}
+                    </div>
+                    
+                    <p><strong>Response:</strong></p>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"message": "Item created",<br>
+&nbsp;&nbsp;"item": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"name": "Laptop",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"price": 999.99,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"description": "High-performance laptop",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"is_available": true<br>
+&nbsp;&nbsp;}<br>
+}
+                    </div>
+                </div>
+                
+                <div class="key-concept">
+                    <strong>Automatic Validation:</strong> FastAPI automatically validates that the JSON matches the model. If a required field is missing or has wrong type, it returns a 422 error!
+                </div>
+                
+                <h3>Combining Path, Query, and Body Parameters</h3>
+                <div class="example-box">
+                    <h4>🔀 All Together</h4>
+                    <div class="code-block">
+from pydantic import BaseModel<br>
+<br>
+class UpdateItem(BaseModel):<br>
+&nbsp;&nbsp;name: str<br>
+&nbsp;&nbsp;price: float<br>
+<br>
+@app.put("/items/{item_id}")<br>
+def update_item(item_id: int, item: UpdateItem, q: str = None):<br>
+&nbsp;&nbsp;return {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"item_id": item_id,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"item": item,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"query": q<br>
+&nbsp;&nbsp;}
+                    </div>
+                    
+                    <p><strong>Example Request:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Path:</strong> /items/42</li>
+                        <li><strong>Query:</strong> ?q=update_now</li>
+                        <li><strong>Body:</strong> {"name": "New Name", "price": 19.99}</li>
+                    </ul>
+                </div>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~45 minutes spent. About 1 hour 15 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- Running with Uvicorn -->
+            <section id="uvicorn">
+                <h2>▶️ Running with Uvicorn: Starting Your Server</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 15px;">
+                    <strong>Uvicorn</strong> is an ASGI server that runs your FastAPI application. It handles incoming HTTP requests and passes them to your FastAPI app.
+                </p>
+                
+                <h3>What is ASGI?</h3>
+                <div class="key-concept">
+                    <strong>ASGI (Asynchronous Server Gateway Interface)</strong> is a specification for asynchronous Python web servers and applications. It allows FastAPI to handle many concurrent requests efficiently.
+                </div>
+                
+                <h3>Step 1: Create Your FastAPI App</h3>
+                <p>Create a file named <span class="highlight">main.py</span>:</p>
+                <div class="code-block">
+from fastapi import FastAPI<br>
+<br>
+app = FastAPI()<br>
+<br>
+@app.get("/")<br>
+def read_root():<br>
+&nbsp;&nbsp;return {"message": "Hello, World!"}<br>
+<br>
+@app.get("/items/{item_id}")<br>
+def read_item(item_id: int, q: str = None):<br>
+&nbsp;&nbsp;return {"item_id": item_id, "q": q}
+                </div>
+                
+                <h3>Step 2: Run with Uvicorn</h3>
+                <div class="example-box">
+                    <h4>⚙️ Basic Command</h4>
+                    <div class="code-block">
+uvicorn main:app --reload
+                    </div>
+                    <p><strong>Breaking it down:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li><span class="highlight">main</span> - File name (main.py)</li>
+                        <li><span class="highlight">app</span> - Variable name containing FastAPI instance</li>
+                        <li><span class="highlight">--reload</span> - Auto-reload on code changes (development only)</li>
+                    </ul>
+                </div>
+                
+                <h3>Running Successfully: What You'll See</h3>
+                <div class="code-block">
+INFO:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)<br>
+INFO:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Uvicorn server process started<br>
+INFO:     Started server process [1234]<br>
+INFO:     Waiting for application startup.<br>
+INFO:     Application startup complete.
+                </div>
+                
+                <p>Your API is now running at <span class="highlight">http://127.0.0.1:8000</span> (localhost:8000)</p>
+                
+                <h3>Uvicorn Configuration Options</h3>
+                
+                <div class="example-box">
+                    <h4>🔧 Specify Host and Port</h4>
+                    <div class="code-block">
+# Default is localhost:8000<br>
+# To listen on all network interfaces:<br>
+uvicorn main:app --host 0.0.0.0 --port 8000<br>
+<br>
+# Use different port<br>
+uvicorn main:app --port 3000<br>
+<br>
+# Use different host<br>
+uvicorn main:app --host 192.168.1.5
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>📊 Workers (Production)</h4>
+                    <div class="code-block">
+# Single worker (default, development)<br>
+uvicorn main:app<br>
+<br>
+# Multiple workers (production, use 4x CPU cores)<br>
+uvicorn main:app --workers 4
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔄 Auto-reload (Development)</h4>
+                    <div class="code-block">
+# Watch for changes and auto-reload<br>
+uvicorn main:app --reload<br>
+<br>
+# Development preset (includes reload)<br>
+uvicorn main:app --env-file .env --reload
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔐 SSL/HTTPS (Production)</h4>
+                    <div class="code-block">
+# With SSL certificates<br>
+uvicorn main:app --ssl-keyfile=key.pem --ssl-certfile=cert.pem
+                    </div>
+                </div>
+                
+                <h3>Common Uvicorn Options Summary</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Default</th>
+                            <th>Purpose</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>--host</strong></td>
+                            <td>127.0.0.1</td>
+                            <td>Server host/IP</td>
+                            <td>--host 0.0.0.0</td>
+                        </tr>
+                        <tr>
+                            <td><strong>--port</strong></td>
+                            <td>8000</td>
+                            <td>Server port</td>
+                            <td>--port 3000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>--reload</strong></td>
+                            <td>False</td>
+                            <td>Auto-reload on code changes</td>
+                            <td>--reload</td>
+                        </tr>
+                        <tr>
+                            <td><strong>--workers</strong></td>
+                            <td>1</td>
+                            <td>Number of worker processes</td>
+                            <td>--workers 4</td>
+                        </tr>
+                        <tr>
+                            <td><strong>--log-level</strong></td>
+                            <td>info</td>
+                            <td>Logging level</td>
+                            <td>--log-level debug</td>
+                        </tr>
+                        <tr>
+                            <td><strong>--ssl-keyfile</strong></td>
+                            <td>None</td>
+                            <td>SSL key file path</td>
+                            <td>--ssl-keyfile key.pem</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Testing Your Running API</h3>
+                <p>Once the server is running, test it:</p>
+                
+                <div class="example-box">
+                    <h4>🧪 Using curl (Command Line)</h4>
+                    <div class="code-block">
+curl http://127.0.0.1:8000/<br>
+<br>
+curl "http://127.0.0.1:8000/items/42?q=python"
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🧪 Using Python requests</h4>
+                    <div class="code-block">
+import requests<br>
+<br>
+response = requests.get("http://127.0.0.1:8000/")<br>
+print(response.json())  # {"message": "Hello, World!"}<br>
+<br>
+response = requests.get("http://127.0.0.1:8000/items/42?q=python")<br>
+print(response.json())  # {"item_id": 42, "q": "python"}
+                    </div>
+                </div>
+                
+                <h3>Stopping the Server</h3>
+                <p>Press <span class="highlight">CTRL+C</span> in your terminal to stop the Uvicorn server.</p>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~75 minutes spent. About 45 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- Auto-Generated Documentation -->
+            <section id="docs">
+                <h2>📖 Auto-Generated API Documentation</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 15px;">
+                    One of FastAPI's superpowers is automatic generation of interactive API documentation. This is generated from your code using OpenAPI specifications.
+                </p>
+                
+                <h3>Two Documentation Interfaces</h3>
+                
+                <div class="example-box">
+                    <h4>🎨 Swagger UI</h4>
+                    <p>A modern, interactive interface for testing your API.</p>
+                    <p><strong>URL:</strong> <span class="highlight">http://localhost:8000/docs</span></p>
+                    <p><strong>Features:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Interactive endpoint exploration</li>
+                        <li>Try-it-out button to test endpoints</li>
+                        <li>View request/response examples</li>
+                        <li>See parameter documentation</li>
+                        <li>Automatic request body examples</li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>📑 ReDoc</h4>
+                    <p>A clean, alternative documentation interface optimized for reading.</p>
+                    <p><strong>URL:</strong> <span class="highlight">http://localhost:8000/redoc</span></p>
+                    <p><strong>Features:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Organized documentation hierarchy</li>
+                        <li>Easy searching</li>
+                        <li>Detailed schema information</li>
+                        <li>Read-only (no testing directly)</li>
+                    </ul>
+                </div>
+                
+                <h3>What Gets Documented Automatically</h3>
+                <p>FastAPI uses your Python function signatures and type hints to generate documentation:</p>
+                
+                <div class="example-box">
+                    <h4>📝 Example Code</h4>
+                    <div class="code-block">
+from fastapi import FastAPI<br>
+from pydantic import BaseModel<br>
+<br>
+app = FastAPI(title="My API", description="A simple API")<br>
+<br>
+class User(BaseModel):<br>
+&nbsp;&nbsp;"""User model"""<br>
+&nbsp;&nbsp;id: int<br>
+&nbsp;&nbsp;name: str<br>
+&nbsp;&nbsp;email: str<br>
+&nbsp;&nbsp;age: int = None<br>
+<br>
+@app.get("/users/{user_id}", response_model=User)<br>
+def get_user(user_id: int):<br>
+&nbsp;&nbsp;"""Get a user by ID"""<br>
+&nbsp;&nbsp;return {"id": user_id, "name": "John", "email": "john@example.com"}
+                    </div>
+                    
+                    <p><strong>Automatically Documented:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Endpoint path: /users/{user_id}</li>
+                        <li>HTTP method: GET</li>
+                        <li>Path parameter: user_id (integer)</li>
+                        <li>Response model: User</li>
+                        <li>Docstring: "Get a user by ID"</li>
+                        <li>All model fields with types</li>
+                    </ul>
+                </div>
+                
+                <h3>OpenAPI/JSON Schema Generation</h3>
+                <p>FastAPI generates OpenAPI 3.0 specification automatically:</p>
+                
+                <div class="example-box">
+                    <h4>📋 OpenAPI Schema Endpoint</h4>
+                    <p><strong>URL:</strong> <span class="highlight">http://localhost:8000/openapi.json</span></p>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"openapi": "3.0.2",<br>
+&nbsp;&nbsp;"info": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"title": "My API",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"description": "A simple API",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"version": "0.1.0"<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;"paths": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"/users/{user_id}": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"get": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"summary": "Get User",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"operationId": "get_user_users__user_id__get",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"parameters": [{...}],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"responses": {...}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
+}
+                    </div>
+                </div>
+                
+                <h3>Customizing Documentation</h3>
+                
+                <div class="example-box">
+                    <h4>⚙️ Customize FastAPI App Info</h4>
+                    <div class="code-block">
+from fastapi import FastAPI<br>
+<br>
+app = FastAPI(<br>
+&nbsp;&nbsp;title="Product API",<br>
+&nbsp;&nbsp;description="API for managing products",<br>
+&nbsp;&nbsp;version="1.0.0",<br>
+&nbsp;&nbsp;contact={<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"name": "API Support",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"url": "https://example.com/support",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"email": "support@example.com"<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;license_info={<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"name": "MIT"<br>
+&nbsp;&nbsp;}<br>
+)
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>📝 Add Docstrings and Examples</h4>
+                    <div class="code-block">
+from fastapi import FastAPI<br>
+from pydantic import BaseModel<br>
+<br>
+class Item(BaseModel):<br>
+&nbsp;&nbsp;"""Product item"""<br>
+&nbsp;&nbsp;name: str<br>
+&nbsp;&nbsp;price: float<br>
+&nbsp;&nbsp;description: str = None<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;class Config:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;json_schema_extra = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"example": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "Laptop",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"price": 999.99,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"description": "High-performance laptop"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+@app.post("/items", response_model=Item)<br>
+def create_item(item: Item):<br>
+&nbsp;&nbsp;"""<br>
+&nbsp;&nbsp;Create a new item.<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;- **name**: Name of the item (required)<br>
+&nbsp;&nbsp;- **price**: Price in USD (required)<br>
+&nbsp;&nbsp;- **description**: Optional description<br>
+&nbsp;&nbsp;"""<br>
+&nbsp;&nbsp;return item
+                    </div>
+                </div>
+                
+                <h3>Disabling Documentation</h3>
+                <p>For production, you might want to disable documentation:</p>
+                
+                <div class="example-box">
+                    <h4>🔒 Disable All Docs</h4>
+                    <div class="code-block">
+from fastapi import FastAPI<br>
+<br>
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔒 Custom URLs</h4>
+                    <div class="code-block">
+app = FastAPI(<br>
+&nbsp;&nbsp;docs_url="/api-docs",  # Custom Swagger URL<br>
+&nbsp;&nbsp;redoc_url="/api-reference",  # Custom ReDoc URL<br>
+&nbsp;&nbsp;openapi_url="/api/openapi.json"  # Custom OpenAPI URL<br>
+)
+                    </div>
+                </div>
+                
+                <h3>Using Documentation in Development</h3>
+                
+                <div class="tip-box">
+                    <h4>💡 Best Practices</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Keep documentation enabled during development</li>
+                        <li>Use Swagger UI (/docs) to test endpoints interactively</li>
+                        <li>Add meaningful docstrings to functions</li>
+                        <li>Include examples in Pydantic models</li>
+                        <li>Document error responses with status codes</li>
+                        <li>Share ReDoc link with stakeholders for review</li>
+                    </ul>
+                </div>
+                
+                <div class="warning-box">
+                    <h4>⚠️ Security Note</h4>
+                    <p>In production, consider disabling documentation or protecting it with authentication to avoid exposing your API structure to potential attackers.</p>
+                </div>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~105 minutes spent. About 15 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- Summary Section -->
+            <section id="summary">
+                <h2>📌 Key Takeaways: Session 3 Summary</h2>
+                
+                <div class="summary-box">
+                    <h4>1. What is FastAPI</h4>
+                    <p>A modern, fast Python framework for building APIs with automatic documentation, type validation, and built-in security features.</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>2. Installation</h4>
+                    <p>Simple setup: create virtual environment, install FastAPI and Uvicorn, you're ready to build APIs!</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>3. Routes and Endpoints</h4>
+                    <p>Use decorators (@app.get, @app.post, etc.) to define endpoints. Support path parameters, query parameters, and request bodies with automatic validation.</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>4. Running Your API</h4>
+                    <p>Start with `uvicorn main:app --reload` for development. Server runs on localhost:8000 and auto-reloads on code changes.</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>5. Auto Documentation</h4>
+                    <p>Access Swagger UI at /docs and ReDoc at /redoc. FastAPI generates interactive documentation from your code automatically!</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>6. Type Validation</h4>
+                    <p>Pydantic models automatically validate request data. Type hints provide both documentation and runtime validation.</p>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p><strong>FastAPI Course - Session 3: FastAPI Basics</strong></p>
+            <p>Duration: 2 Hours | Content Delivery Only</p>
+            <p>© 2024 API Development Course | All Rights Reserved</p>
+        </footer>
+    </div>
+</body>
+</html>

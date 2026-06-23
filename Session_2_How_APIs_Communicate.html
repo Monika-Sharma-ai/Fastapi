@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session 2: How APIs Communicate - FastAPI Course</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .duration {
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+        
+        nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav a {
+            background: white;
+            color: #667eea;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            border: 2px solid #667eea;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        nav a:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            scroll-margin-top: 100px;
+        }
+        
+        section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        section h3 {
+            color: #764ba2;
+            font-size: 1.4em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .learning-objectives {
+            background: #e7f3ff;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        
+        .learning-objectives h3 {
+            margin-top: 0;
+        }
+        
+        .learning-objectives li {
+            margin: 8px 0;
+            margin-left: 20px;
+        }
+        
+        .example-box {
+            background: #f5f5f5;
+            border-left: 4px solid #764ba2;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .example-box h4 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+        
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-family: monospace;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .comparison-table tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .key-concept {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .key-concept strong {
+            color: #ff6b6b;
+        }
+        
+        .time-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .time-box strong {
+            color: #856404;
+        }
+        
+        .breadcrumb {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background-color: #fff59d;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        
+        .summary-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .summary-box h4 {
+            color: #1565c0;
+            margin-bottom: 10px;
+        }
+        
+        .method-box {
+            background: #f0f7ff;
+            border: 2px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .method-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .status-code-group {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 5px;
+        }
+        
+        .status-code-group h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .header-category {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+            border-radius: 3px;
+        }
+        
+        .header-category h5 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .header-category ul {
+            margin-left: 20px;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border-top: 2px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📡 Session 2: How APIs Communicate</h1>
+            <p>Mastering HTTP Methods, Status Codes, Headers, and API Keys</p>
+            <div class="duration">⏱️ 2 Hours</div>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#objectives">Learning Objectives</a></li>
+                <li><a href="#http-methods">HTTP Methods</a></li>
+                <li><a href="#status-codes">Status Codes</a></li>
+                <li><a href="#headers">Headers</a></li>
+                <li><a href="#api-keys">API Keys</a></li>
+                <li><a href="#practical">Practical Examples</a></li>
+                <li><a href="#summary">Summary</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <div class="breadcrumb">FastAPI Course > Session 2 > How APIs Communicate</div>
+            
+            <!-- Learning Objectives -->
+            <section id="objectives">
+                <h2>📚 Learning Objectives</h2>
+                <div class="learning-objectives">
+                    <h3>By the end of this session, you will understand:</h3>
+                    <ul>
+                        <li>All HTTP methods and when to use each one (GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS)</li>
+                        <li>The complete spectrum of HTTP status codes and their meanings</li>
+                        <li>Different types of HTTP headers and their purposes</li>
+                        <li>How to use API keys for authentication and rate limiting</li>
+                        <li>Real-world examples of API communication patterns</li>
+                        <li>How to design secure and efficient APIs</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- HTTP Methods Section -->
+            <section id="http-methods">
+                <h2>🔧 HTTP Methods: The Verbs of the Web</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 15px;">
+                    HTTP methods define the action you want to perform on a resource. Think of them as verbs in a sentence. The most common REST APIs use these 4-7 methods.
+                </p>
+                
+                <h3>1. GET - Retrieve Data</h3>
+                <div class="method-box">
+                    <h4>🔍 Purpose: Read and retrieve data without modifying it</h4>
+                    <p><strong>Key Characteristics:</strong></p>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Safe - doesn't change server state</li>
+                        <li>Idempotent - calling multiple times returns the same result</li>
+                        <li>No request body (data in URL parameters)</li>
+                        <li>Cacheable - results can be cached by browsers/proxies</li>
+                        <li>Should not have side effects</li>
+                    </ul>
+                    
+                    <p><strong>Examples:</strong></p>
+                    <div class="code-block">
+GET /api/users<br>
+GET /api/users/123<br>
+GET /api/posts?category=technology&limit=10<br>
+GET /api/weather?lat=40.71&lon=-74.01
+                    </div>
+                </div>
+                
+                <h3>2. POST - Create Data</h3>
+                <div class="method-box">
+                    <h4>➕ Purpose: Create a new resource on the server</h4>
+                    <p><strong>Key Characteristics:</strong></p>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Not safe - creates new data on server</li>
+                        <li>Not idempotent - calling multiple times creates duplicates</li>
+                        <li>Has a request body with the data to create</li>
+                        <li>Returns 201 Created status code</li>
+                        <li>Location header points to new resource</li>
+                    </ul>
+                    
+                    <p><strong>Examples:</strong></p>
+                    <div class="code-block">
+POST /api/users<br>
+{<br>
+&nbsp;&nbsp;"name": "Jane Doe",<br>
+&nbsp;&nbsp;"email": "jane@example.com",<br>
+&nbsp;&nbsp;"password": "secure123"<br>
+}<br>
+<br>
+POST /api/blog/posts<br>
+{<br>
+&nbsp;&nbsp;"title": "Getting Started with APIs",<br>
+&nbsp;&nbsp;"content": "...",<br>
+&nbsp;&nbsp;"author_id": 42<br>
+}
+                    </div>
+                </div>
+                
+                <h3>3. PUT - Replace Entire Resource</h3>
+                <div class="method-box">
+                    <h4>♻️ Purpose: Completely replace a resource with new data</h4>
+                    <p><strong>Key Characteristics:</strong></p>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Not safe - modifies data on server</li>
+                        <li>Idempotent - calling multiple times has same effect</li>
+                        <li>Requires specifying the complete resource</li>
+                        <li>Replaces the entire resource (not partial updates)</li>
+                        <li>Returns 200 OK or 204 No Content</li>
+                    </ul>
+                    
+                    <p><strong>Examples:</strong></p>
+                    <div class="code-block">
+PUT /api/users/123<br>
+{<br>
+&nbsp;&nbsp;"name": "Jane Smith",<br>
+&nbsp;&nbsp;"email": "jane.smith@example.com",<br>
+&nbsp;&nbsp;"role": "admin",<br>
+&nbsp;&nbsp;"status": "active"<br>
+}
+                    </div>
+                    
+                    <div class="key-concept">
+                        <strong>Note:</strong> PUT replaces the ENTIRE resource. If you omit a field, it may be set to null or default value.
+                    </div>
+                </div>
+                
+                <h3>4. DELETE - Remove Data</h3>
+                <div class="method-box">
+                    <h4>🗑️ Purpose: Delete a resource from the server</h4>
+                    <p><strong>Key Characteristics:</strong></p>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Not safe - removes data from server</li>
+                        <li>Idempotent - deleting twice has same result</li>
+                        <li>No request body needed</li>
+                        <li>Returns 204 No Content or 200 OK</li>
+                        <li>Sometimes returns deleted resource in response</li>
+                    </ul>
+                    
+                    <p><strong>Examples:</strong></p>
+                    <div class="code-block">
+DELETE /api/users/123<br>
+<br>
+DELETE /api/posts/456<br>
+<br>
+DELETE /api/comments/789
+                    </div>
+                </div>
+                
+                <h3>5. PATCH - Partial Update</h3>
+                <div class="method-box">
+                    <h4>🔧 Purpose: Update specific fields of a resource (partial update)</h4>
+                    <p><strong>Key Characteristics:</strong></p>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Not safe - modifies data on server</li>
+                        <li>May or may not be idempotent</li>
+                        <li>Only include fields you want to change</li>
+                        <li>More efficient than PUT for small updates</li>
+                        <li>Returns 200 OK with updated resource</li>
+                    </ul>
+                    
+                    <p><strong>Examples:</strong></p>
+                    <div class="code-block">
+PATCH /api/users/123<br>
+{<br>
+&nbsp;&nbsp;"email": "newemail@example.com"<br>
+}<br>
+<br>
+PATCH /api/products/456<br>
+{<br>
+&nbsp;&nbsp;"price": 29.99<br>
+}
+                    </div>
+                    
+                    <div class="key-concept">
+                        <strong>PUT vs PATCH:</strong> Use PUT to replace the entire resource, PATCH to update only specific fields.
+                    </div>
+                </div>
+                
+                <h3>6. HEAD - Like GET but No Response Body</h3>
+                <div class="method-box">
+                    <h4>📋 Purpose: Get headers only, useful for checking resource existence or size</h4>
+                    <p><strong>Key Characteristics:</strong></p>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Safe - doesn't change data</li>
+                        <li>Idempotent</li>
+                        <li>Returns same headers as GET but no body</li>
+                        <li>Useful for checking if resource exists</li>
+                        <li>Can check Last-Modified and Content-Length headers</li>
+                    </ul>
+                    
+                    <p><strong>Example Use Cases:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Check if file exists before downloading</li>
+                        <li>Verify resource modification time</li>
+                        <li>Check content length without downloading</li>
+                    </ul>
+                </div>
+                
+                <h3>7. OPTIONS - Describe Communication Options</h3>
+                <div class="method-box">
+                    <h4>ℹ️ Purpose: Get information about what methods are allowed for a resource</h4>
+                    <p><strong>Key Characteristics:</strong></p>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Safe - doesn't change data</li>
+                        <li>Used by browsers for CORS pre-flight checks</li>
+                        <li>Returns Allow header with permitted methods</li>
+                        <li>Useful for API discovery</li>
+                    </ul>
+                    
+                    <p><strong>Example Response:</strong></p>
+                    <div class="code-block">
+OPTIONS /api/users/123<br>
+<br>
+Response Headers:<br>
+Allow: GET, POST, PUT, DELETE, PATCH, OPTIONS
+                    </div>
+                </div>
+                
+                <h3>HTTP Methods Comparison Table</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Safe?</th>
+                            <th>Idempotent?</th>
+                            <th>Cacheable?</th>
+                            <th>Has Body?</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GET</strong></td>
+                            <td>✓ Yes</td>
+                            <td>✓ Yes</td>
+                            <td>✓ Yes</td>
+                            <td>✗ No</td>
+                            <td>Retrieve data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>POST</strong></td>
+                            <td>✗ No</td>
+                            <td>✗ No</td>
+                            <td>✗ No*</td>
+                            <td>✓ Yes</td>
+                            <td>Create data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PUT</strong></td>
+                            <td>✗ No</td>
+                            <td>✓ Yes</td>
+                            <td>✗ No*</td>
+                            <td>✓ Yes</td>
+                            <td>Replace entire resource</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DELETE</strong></td>
+                            <td>✗ No</td>
+                            <td>✓ Yes</td>
+                            <td>✗ No*</td>
+                            <td>✗ No</td>
+                            <td>Delete resource</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PATCH</strong></td>
+                            <td>✗ No</td>
+                            <td>Maybe</td>
+                            <td>✗ No*</td>
+                            <td>✓ Yes</td>
+                            <td>Partial update</td>
+                        </tr>
+                        <tr>
+                            <td><strong>HEAD</strong></td>
+                            <td>✓ Yes</td>
+                            <td>✓ Yes</td>
+                            <td>✓ Yes</td>
+                            <td>✗ No</td>
+                            <td>Get headers only</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OPTIONS</strong></td>
+                            <td>✓ Yes</td>
+                            <td>✓ Yes</td>
+                            <td>✓ Yes</td>
+                            <td>✗ No</td>
+                            <td>Describe options</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~25 minutes spent. About 1 hour 35 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- Status Codes Section -->
+            <section id="status-codes">
+                <h2>📊 Status Codes: API Response Signals</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 15px;">
+                    HTTP status codes are 3-digit numbers that tell the client what happened with their request. They're grouped into 5 categories.
+                </p>
+                
+                <div class="status-code-group">
+                    <h4>1xx - Informational (100-199)</h4>
+                    <p>The request was received and the server is processing it. Rarely used in modern APIs.</p>
+                    <ul style="margin-left: 20px;">
+                        <li><span class="highlight">100 Continue</span> - Client should continue sending request body</li>
+                        <li><span class="highlight">101 Switching Protocols</span> - Changing to WebSocket, HTTP/2, etc.</li>
+                    </ul>
+                </div>
+                
+                <div class="status-code-group">
+                    <h4>2xx - Success (200-299)</h4>
+                    <p>✅ The request was successful. The client can trust the response.</p>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Meaning</th>
+                                <th>Use Case</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>200</strong></td>
+                                <td>OK</td>
+                                <td>Request successful, response has body</td>
+                                <td>GET request returns data, POST request succeeds</td>
+                            </tr>
+                            <tr>
+                                <td><strong>201</strong></td>
+                                <td>Created</td>
+                                <td>Resource successfully created</td>
+                                <td>POST request creates new user/post/item</td>
+                            </tr>
+                            <tr>
+                                <td><strong>202</strong></td>
+                                <td>Accepted</td>
+                                <td>Request accepted but processing continues</td>
+                                <td>Async job started, background processing</td>
+                            </tr>
+                            <tr>
+                                <td><strong>204</strong></td>
+                                <td>No Content</td>
+                                <td>Success but no body in response</td>
+                                <td>DELETE request, PATCH with no response needed</td>
+                            </tr>
+                            <tr>
+                                <td><strong>206</strong></td>
+                                <td>Partial Content</td>
+                                <td>Only part of resource is returned</td>
+                                <td>Resumable downloads, Range requests</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="status-code-group">
+                    <h4>3xx - Redirection (300-399)</h4>
+                    <p>⛔ The resource has moved or the client needs to take additional action.</p>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Meaning</th>
+                                <th>Use Case</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>301</strong></td>
+                                <td>Moved Permanently</td>
+                                <td>Resource permanently moved to new URL</td>
+                                <td>API endpoint restructured (old endpoint removed)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>302</strong></td>
+                                <td>Found</td>
+                                <td>Resource temporarily at different URL</td>
+                                <td>Temporary redirect, load balancing</td>
+                            </tr>
+                            <tr>
+                                <td><strong>304</strong></td>
+                                <td>Not Modified</td>
+                                <td>Resource not changed since last request</td>
+                                <td>Caching: client has latest version</td>
+                            </tr>
+                            <tr>
+                                <td><strong>307</strong></td>
+                                <td>Temporary Redirect</td>
+                                <td>Temporary redirect, maintain HTTP method</td>
+                                <td>Safe redirection for POST/PUT requests</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="status-code-group">
+                    <h4>4xx - Client Error (400-499)</h4>
+                    <p>❌ The client made a bad request or doesn't have permission.</p>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Meaning</th>
+                                <th>Use Case</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>400</strong></td>
+                                <td>Bad Request</td>
+                                <td>Server can't understand request (invalid data)</td>
+                                <td>Malformed JSON, missing required fields</td>
+                            </tr>
+                            <tr>
+                                <td><strong>401</strong></td>
+                                <td>Unauthorized</td>
+                                <td>Authentication required but missing/invalid</td>
+                                <td>API key missing, token expired, invalid credentials</td>
+                            </tr>
+                            <tr>
+                                <td><strong>403</strong></td>
+                                <td>Forbidden</td>
+                                <td>Authenticated but not authorized to access</td>
+                                <td>User doesn't have permission (insufficient role)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>404</strong></td>
+                                <td>Not Found</td>
+                                <td>Resource doesn't exist</td>
+                                <td>User ID doesn't exist, endpoint URL wrong</td>
+                            </tr>
+                            <tr>
+                                <td><strong>409</strong></td>
+                                <td>Conflict</td>
+                                <td>Request conflicts with current state</td>
+                                <td>Duplicate email during signup, version conflict</td>
+                            </tr>
+                            <tr>
+                                <td><strong>429</strong></td>
+                                <td>Too Many Requests</td>
+                                <td>Rate limit exceeded</td>
+                                <td>Exceeded API quota, too many requests in timeframe</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="status-code-group">
+                    <h4>5xx - Server Error (500-599)</h4>
+                    <p>🔴 The server encountered an error while processing the valid request.</p>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Meaning</th>
+                                <th>Use Case</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>500</strong></td>
+                                <td>Internal Server Error</td>
+                                <td>Generic server error (code crashed)</td>
+                                <td>Unhandled exception, database query error</td>
+                            </tr>
+                            <tr>
+                                <td><strong>501</strong></td>
+                                <td>Not Implemented</td>
+                                <td>Server doesn't support this method</td>
+                                <td>Endpoint doesn't implement requested HTTP method</td>
+                            </tr>
+                            <tr>
+                                <td><strong>502</strong></td>
+                                <td>Bad Gateway</td>
+                                <td>Server got invalid response from upstream</td>
+                                <td>Proxy/load balancer issue, backend offline</td>
+                            </tr>
+                            <tr>
+                                <td><strong>503</strong></td>
+                                <td>Service Unavailable</td>
+                                <td>Server temporarily down for maintenance</td>
+                                <td>Scheduled maintenance, server overloaded</td>
+                            </tr>
+                            <tr>
+                                <td><strong>504</strong></td>
+                                <td>Gateway Timeout</td>
+                                <td>Server didn't get response in time</td>
+                                <td>Slow database query, backend timeout</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="key-concept">
+                    <strong>Remember:</strong> 2xx = Success ✓ | 3xx = Redirect ⛔ | 4xx = Client Error ❌ | 5xx = Server Error 🔴
+                </div>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~45 minutes spent. About 1 hour 15 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- Headers Section -->
+            <section id="headers">
+                <h2>📝 Headers: The Metadata of Communication</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 15px;">
+                    Headers are key-value pairs that provide metadata about the request or response. They tell the server/client additional information about how to handle the data.
+                </p>
+                
+                <h3>Request Headers (Client → Server)</h3>
+                
+                <div class="header-category">
+                    <h5>🔐 Authentication Headers</h5>
+                    <ul>
+                        <li><span class="highlight">Authorization</span> - Sends credentials (API key, JWT token, etc.)
+                            <div class="code-block" style="margin: 10px 0;">
+Authorization: Bearer eyJhbGc...<br>
+Authorization: Basic dXNlcjpwYXNz<br>
+Authorization: ApiKey sk-1234567890
+                            </div>
+                        </li>
+                        <li><span class="highlight">X-API-Key</span> - Alternative API key header
+                            <div class="code-block" style="margin: 10px 0;">
+X-API-Key: sk_live_1234567890abcdef
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="header-category">
+                    <h5>📋 Content Headers</h5>
+                    <ul>
+                        <li><span class="highlight">Content-Type</span> - Tells server what format data is in
+                            <div class="code-block" style="margin: 10px 0;">
+Content-Type: application/json<br>
+Content-Type: application/x-www-form-urlencoded<br>
+Content-Type: multipart/form-data<br>
+Content-Type: text/plain
+                            </div>
+                        </li>
+                        <li><span class="highlight">Content-Length</span> - Size of request body in bytes
+                            <div class="code-block" style="margin: 10px 0;">
+Content-Length: 348
+                            </div>
+                        </li>
+                        <li><span class="highlight">Accept</span> - What format client wants in response
+                            <div class="code-block" style="margin: 10px 0;">
+Accept: application/json<br>
+Accept: application/xml<br>
+Accept: text/html
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="header-category">
+                    <h5>🖥️ Request Context Headers</h5>
+                    <ul>
+                        <li><span class="highlight">User-Agent</span> - Identifies the client (browser, app, etc.)
+                            <div class="code-block" style="margin: 10px 0;">
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)<br>
+User-Agent: MyApp/1.0 (iOS 15.0)
+                            </div>
+                        </li>
+                        <li><span class="highlight">Host</span> - Domain name of the server
+                            <div class="code-block" style="margin: 10px 0;">
+Host: api.example.com
+                            </div>
+                        </li>
+                        <li><span class="highlight">Origin</span> - Where the request came from (for CORS)
+                            <div class="code-block" style="margin: 10px 0;">
+Origin: https://myapp.com
+                            </div>
+                        </li>
+                        <li><span class="highlight">Referer</span> - Previous page URL
+                            <div class="code-block" style="margin: 10px 0;">
+Referer: https://google.com/search
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="header-category">
+                    <h5>⚡ Caching Headers</h5>
+                    <ul>
+                        <li><span class="highlight">Cache-Control</span> - How long to cache the response
+                            <div class="code-block" style="margin: 10px 0;">
+Cache-Control: max-age=3600<br>
+Cache-Control: no-cache<br>
+Cache-Control: private, max-age=300
+                            </div>
+                        </li>
+                        <li><span class="highlight">If-Modified-Since</span> - Only get if changed since date
+                            <div class="code-block" style="margin: 10px 0;">
+If-Modified-Since: Wed, 21 Oct 2024 07:28:00 GMT
+                            </div>
+                        </li>
+                        <li><span class="highlight">ETag</span> - Unique identifier for resource version (sent in response)
+                            <div class="code-block" style="margin: 10px 0;">
+ETag: "123456789"
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="header-category">
+                    <h5>🔗 Custom Headers</h5>
+                    <p>APIs often define their own headers (prefixed with X-):</p>
+                    <ul>
+                        <li><span class="highlight">X-Request-ID</span> - Unique identifier for tracking
+                            <div class="code-block" style="margin: 10px 0;">
+X-Request-ID: abc-123-def-456
+                            </div>
+                        </li>
+                        <li><span class="highlight">X-Rate-Limit-Remaining</span> - Requests left before rate limit
+                            <div class="code-block" style="margin: 10px 0;">
+X-Rate-Limit-Remaining: 45
+                            </div>
+                        </li>
+                        <li><span class="highlight">X-Custom-Header</span> - Any custom data
+                            <div class="code-block" style="margin: 10px 0;">
+X-Client-Version: 2.1.0
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <h3>Response Headers (Server → Client)</h3>
+                
+                <div class="header-category">
+                    <h5>📊 Response Info Headers</h5>
+                    <ul>
+                        <li><span class="highlight">Content-Type</span> - Format of response data
+                            <div class="code-block" style="margin: 10px 0;">
+Content-Type: application/json; charset=utf-8
+                            </div>
+                        </li>
+                        <li><span class="highlight">Content-Length</span> - Size of response body
+                            <div class="code-block" style="margin: 10px 0;">
+Content-Length: 1234
+                            </div>
+                        </li>
+                        <li><span class="highlight">Server</span> - Server software
+                            <div class="code-block" style="margin: 10px 0;">
+Server: nginx/1.24.0
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="header-category">
+                    <h5>🔄 Caching Headers</h5>
+                    <ul>
+                        <li><span class="highlight">Cache-Control</span> - How client should cache
+                            <div class="code-block" style="margin: 10px 0;">
+Cache-Control: public, max-age=3600<br>
+Cache-Control: private, no-cache
+                            </div>
+                        </li>
+                        <li><span class="highlight">Last-Modified</span> - When resource was last changed
+                            <div class="code-block" style="margin: 10px 0;">
+Last-Modified: Wed, 21 Oct 2024 07:28:00 GMT
+                            </div>
+                        </li>
+                        <li><span class="highlight">ETag</span> - Unique version of resource
+                            <div class="code-block" style="margin: 10px 0;">
+ETag: "33a64df5425b"
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="header-category">
+                    <h5>🔐 Security Headers</h5>
+                    <ul>
+                        <li><span class="highlight">Access-Control-Allow-Origin</span> - CORS: who can access
+                            <div class="code-block" style="margin: 10px 0;">
+Access-Control-Allow-Origin: https://myapp.com<br>
+Access-Control-Allow-Origin: *
+                            </div>
+                        </li>
+                        <li><span class="highlight">Access-Control-Allow-Methods</span> - CORS: allowed HTTP methods
+                            <div class="code-block" style="margin: 10px 0;">
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+                            </div>
+                        </li>
+                        <li><span class="highlight">Set-Cookie</span> - Store cookie on client
+                            <div class="code-block" style="margin: 10px 0;">
+Set-Cookie: session_id=abc123; Path=/; HttpOnly
+                            </div>
+                        </li>
+                        <li><span class="highlight">Strict-Transport-Security</span> - Enforce HTTPS
+                            <div class="code-block" style="margin: 10px 0;">
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="header-category">
+                    <h5>📍 Redirect Headers</h5>
+                    <ul>
+                        <li><span class="highlight">Location</span> - Where to redirect (used with 3xx codes)
+                            <div class="code-block" style="margin: 10px 0;">
+Location: https://api.example.com/v2/users
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~60 minutes spent. About 1 hour remaining.
+                </div>
+            </section>
+            
+            <!-- API Keys Section -->
+            <section id="api-keys">
+                <h2>🔑 API Keys: Security & Access Control</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 15px;">
+                    API keys are credentials that authenticate your application and control access to API services. They're essential for security and rate limiting.
+                </p>
+                
+                <h3>What is an API Key?</h3>
+                <div class="key-concept">
+                    <strong>Definition:</strong> An API key is a unique string of characters that identifies your application to the API service. It proves you have permission to use the API and helps the server track your usage.
+                </div>
+                
+                <h3>Types of API Keys</h3>
+                
+                <div class="example-box">
+                    <h4>1️⃣ Public Keys</h4>
+                    <p>Can be exposed in frontend code (not sensitive).</p>
+                    <ul style="margin-left: 20px;">
+                        <li>Frontend/browser analytics keys</li>
+                        <li>Stripe publishable keys</li>
+                        <li>Google Maps API keys (with domain restrictions)</li>
+                    </ul>
+                    <div class="code-block">
+const publicKey = "pk_live_abc123def456";<br>
+// Safe to put in frontend code (with restrictions)
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>2️⃣ Secret Keys</h4>
+                    <p>Must NEVER be exposed (highly sensitive).</p>
+                    <ul style="margin-left: 20px;">
+                        <li>Backend API keys</li>
+                        <li>Database credentials</li>
+                        <li>Stripe secret keys</li>
+                        <li>OpenAI API keys</li>
+                    </ul>
+                    <div class="code-block">
+const secretKey = "sk_live_xyz789abc123";<br>
+// MUST be kept secret - store in environment variables!<br>
+// Use: process.env.OPENAI_API_KEY
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>3️⃣ Bearer Tokens / JWT</h4>
+                    <p>Temporary tokens for user sessions.</p>
+                    <ul style="margin-left: 20px;">
+                        <li>OAuth tokens</li>
+                        <li>JWT (JSON Web Tokens)</li>
+                        <li>Session tokens</li>
+                    </ul>
+                    <div class="code-block">
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...<br>
+// Token expires after certain time
+                    </div>
+                </div>
+                
+                <h3>How API Keys Work in Requests</h3>
+                
+                <div class="example-box">
+                    <h4>Method 1: Authorization Header</h4>
+                    <div class="code-block">
+GET /api/users<br>
+Authorization: Bearer sk_live_1234567890abcdef<br>
+<br>
+// Server validates the key and processes request
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Method 2: X-API-Key Header</h4>
+                    <div class="code-block">
+GET /api/data<br>
+X-API-Key: sk_live_1234567890abcdef<br>
+<br>
+// Common in third-party APIs
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Method 3: Query Parameter</h4>
+                    <div class="code-block">
+GET /api/weather?lat=40.71&lon=-74.01&key=sk_live_1234567890abcdef<br>
+<br>
+// Less secure (exposes key in URL)
+                    </div>
+                </div>
+                
+                <h3>API Key Best Practices</h3>
+                
+                <div class="key-concept">
+                    <strong>🔒 Security Rules:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Never commit API keys to GitHub (use .env files)</li>
+                        <li>Rotate keys periodically (create new ones, delete old)</li>
+                        <li>Use different keys for development, staging, production</li>
+                        <li>Store keys in environment variables (process.env.API_KEY)</li>
+                        <li>Use secrets management tools (AWS Secrets Manager, HashiCorp Vault)</li>
+                        <li>Monitor key usage for suspicious activity</li>
+                        <li>Immediately revoke compromised keys</li>
+                    </ul>
+                </div>
+                
+                <h3>Rate Limiting with API Keys</h3>
+                <p>APIs use keys to track and limit usage per client:</p>
+                
+                <div class="example-box">
+                    <h4>Rate Limit Headers in Response</h4>
+                    <div class="code-block">
+HTTP/1.1 200 OK<br>
+X-RateLimit-Limit: 1000<br>
+X-RateLimit-Remaining: 847<br>
+X-RateLimit-Reset: 1703001600<br>
+<br>
+{<br>
+&nbsp;&nbsp;"data": [...],<br>
+&nbsp;&nbsp;"message": "You have 847 requests remaining"<br>
+}
+                    </div>
+                    <p><strong>What this means:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Max 1000 requests per hour</li>
+                        <li>847 requests remaining in this hour</li>
+                        <li>Resets at Unix timestamp 1703001600</li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Exceeding Rate Limit</h4>
+                    <div class="code-block">
+HTTP/1.1 429 Too Many Requests<br>
+Retry-After: 3600<br>
+X-RateLimit-Remaining: 0<br>
+<br>
+{<br>
+&nbsp;&nbsp;"error": "Rate limit exceeded",<br>
+&nbsp;&nbsp;"message": "You've made too many requests. Please retry after 1 hour."<br>
+}
+                    </div>
+                </div>
+                
+                <h3>Real-World API Key Examples</h3>
+                
+                <div class="example-box">
+                    <h4>🤖 OpenAI API</h4>
+                    <div class="code-block">
+curl https://api.openai.com/v1/chat/completions \<br>
+&nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+&nbsp;&nbsp;-H "Authorization: Bearer sk-proj-abc123..." \<br>
+&nbsp;&nbsp;-d '{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"model": "gpt-4",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"messages": [{"role": "user", "content": "Hello"}]<br>
+&nbsp;&nbsp;}'
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🗺️ Google Maps API</h4>
+                    <div class="code-block">
+GET https://maps.googleapis.com/maps/api/place/textsearch/json?<br>
+query=restaurants%20in%20Sydney&<br>
+key=AIzaSyDYwzlRISAM2CmOW3Aj9Eo2VCZQ3o3K8zw
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>💳 Stripe API</h4>
+                    <div class="code-block">
+curl https://api.stripe.com/v1/charges \<br>
+&nbsp;&nbsp;-u YOUR_STRIPE_SECRET_KEY: \<br>
+&nbsp;&nbsp;-d amount=2000 \<br>
+&nbsp;&nbsp;-d currency=usd
+                    </div>
+                    <p><em>Basic Auth: colon-separated (key:password where password is empty). Replace YOUR_STRIPE_SECRET_KEY with your actual API key.</em></p>
+                </div>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~85 minutes spent. About 35 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- Practical Examples Section -->
+            <section id="practical">
+                <h2>💡 Practical Examples: Complete API Interactions</h2>
+                
+                <h3>Example 1: Creating a User (POST)</h3>
+                <div class="example-box">
+                    <p><strong>Scenario:</strong> Sign up a new user in the system</p>
+                    <p><strong>Request:</strong></p>
+                    <div class="code-block">
+POST /api/v1/users<br>
+Host: api.example.com<br>
+Content-Type: application/json<br>
+Authorization: Bearer sk_live_token123<br>
+X-Request-ID: req-001-xyz<br>
+<br>
+{<br>
+&nbsp;&nbsp;"name": "Alice Johnson",<br>
+&nbsp;&nbsp;"email": "alice@example.com",<br>
+&nbsp;&nbsp;"password": "SecurePass123!",<br>
+&nbsp;&nbsp;"age": 28<br>
+}
+                    </div>
+                    
+                    <p><strong>Success Response (201 Created):</strong></p>
+                    <div class="code-block">
+HTTP/1.1 201 Created<br>
+Content-Type: application/json<br>
+Location: /api/v1/users/1234<br>
+X-RateLimit-Remaining: 499<br>
+<br>
+{<br>
+&nbsp;&nbsp;"id": 1234,<br>
+&nbsp;&nbsp;"name": "Alice Johnson",<br>
+&nbsp;&nbsp;"email": "alice@example.com",<br>
+&nbsp;&nbsp;"age": 28,<br>
+&nbsp;&nbsp;"created_at": "2024-06-18T10:30:00Z",<br>
+&nbsp;&nbsp;"status": "active"<br>
+}
+                    </div>
+                    
+                    <p><strong>Error Response (400 Bad Request):</strong></p>
+                    <div class="code-block">
+HTTP/1.1 400 Bad Request<br>
+Content-Type: application/json<br>
+<br>
+{<br>
+&nbsp;&nbsp;"error": "ValidationError",<br>
+&nbsp;&nbsp;"message": "Invalid email format",<br>
+&nbsp;&nbsp;"details": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"field": "email",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"value": "alice@invalid",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"constraint": "must be valid email"<br>
+&nbsp;&nbsp;}<br>
+}
+                    </div>
+                </div>
+                
+                <h3>Example 2: Fetching User Data (GET)</h3>
+                <div class="example-box">
+                    <p><strong>Scenario:</strong> Get a specific user's profile</p>
+                    <p><strong>Request:</strong></p>
+                    <div class="code-block">
+GET /api/v1/users/1234<br>
+Host: api.example.com<br>
+Authorization: Bearer sk_live_token123<br>
+If-Modified-Since: Wed, 17 Jun 2024 00:00:00 GMT
+                    </div>
+                    
+                    <p><strong>Success Response (200 OK):</strong></p>
+                    <div class="code-block">
+HTTP/1.1 200 OK<br>
+Content-Type: application/json<br>
+Cache-Control: private, max-age=300<br>
+ETag: "abc123def456"<br>
+<br>
+{<br>
+&nbsp;&nbsp;"id": 1234,<br>
+&nbsp;&nbsp;"name": "Alice Johnson",<br>
+&nbsp;&nbsp;"email": "alice@example.com",<br>
+&nbsp;&nbsp;"age": 28,<br>
+&nbsp;&nbsp;"role": "user",<br>
+&nbsp;&nbsp;"created_at": "2024-01-15T08:00:00Z"<br>
+}
+                    </div>
+                    
+                    <p><strong>Not Modified Response (304 Not Modified):</strong></p>
+                    <div class="code-block">
+HTTP/1.1 304 Not Modified<br>
+ETag: "abc123def456"<br>
+Cache-Control: private, max-age=300
+                    </div>
+                    <p><em>User still has the same cached version, no need to re-download</em></p>
+                </div>
+                
+                <h3>Example 3: Updating User Data (PATCH)</h3>
+                <div class="example-box">
+                    <p><strong>Scenario:</strong> Update only the user's email</p>
+                    <p><strong>Request:</strong></p>
+                    <div class="code-block">
+PATCH /api/v1/users/1234<br>
+Host: api.example.com<br>
+Content-Type: application/json<br>
+Authorization: Bearer sk_live_token123<br>
+<br>
+{<br>
+&nbsp;&nbsp;"email": "alice.new@example.com"<br>
+}
+                    </div>
+                    
+                    <p><strong>Success Response (200 OK):</strong></p>
+                    <div class="code-block">
+HTTP/1.1 200 OK<br>
+Content-Type: application/json<br>
+<br>
+{<br>
+&nbsp;&nbsp;"id": 1234,<br>
+&nbsp;&nbsp;"name": "Alice Johnson",<br>
+&nbsp;&nbsp;"email": "alice.new@example.com",<br>
+&nbsp;&nbsp;"age": 28<br>
+}
+                    </div>
+                </div>
+                
+                <h3>Example 4: Handling Unauthorized Access (401)</h3>
+                <div class="example-box">
+                    <p><strong>Scenario:</strong> API key is missing or invalid</p>
+                    <p><strong>Request (missing auth):</strong></p>
+                    <div class="code-block">
+GET /api/v1/users/1234<br>
+Host: api.example.com
+                    </div>
+                    
+                    <p><strong>Error Response (401 Unauthorized):</strong></p>
+                    <div class="code-block">
+HTTP/1.1 401 Unauthorized<br>
+WWW-Authenticate: Bearer realm="API"<br>
+Content-Type: application/json<br>
+<br>
+{<br>
+&nbsp;&nbsp;"error": "Unauthorized",<br>
+&nbsp;&nbsp;"message": "Missing or invalid API key",<br>
+&nbsp;&nbsp;"hint": "Include 'Authorization: Bearer YOUR_KEY' header"<br>
+}
+                    </div>
+                </div>
+                
+                <h3>Example 5: Handling Forbidden Access (403)</h3>
+                <div class="example-box">
+                    <p><strong>Scenario:</strong> User is authenticated but lacks permission</p>
+                    <p><strong>Request (valid auth, insufficient permission):</strong></p>
+                    <div class="code-block">
+DELETE /api/v1/users/5678<br>
+Authorization: Bearer sk_live_token123<br>
+<br>
+(User 1234 trying to delete another user 5678)
+                    </div>
+                    
+                    <p><strong>Error Response (403 Forbidden):</strong></p>
+                    <div class="code-block">
+HTTP/1.1 403 Forbidden<br>
+Content-Type: application/json<br>
+<br>
+{<br>
+&nbsp;&nbsp;"error": "Forbidden",<br>
+&nbsp;&nbsp;"message": "You don't have permission to delete this user",<br>
+&nbsp;&nbsp;"required_role": "admin"<br>
+}
+                    </div>
+                </div>
+                
+                <h3>Example 6: Handling Rate Limiting (429)</h3>
+                <div class="example-box">
+                    <p><strong>Scenario:</strong> Made too many requests</p>
+                    <p><strong>Request (50th request in a minute, limit is 30):</strong></p>
+                    <div class="code-block">
+GET /api/v1/data<br>
+Authorization: Bearer sk_live_token123
+                    </div>
+                    
+                    <p><strong>Rate Limit Response (429 Too Many Requests):</strong></p>
+                    <div class="code-block">
+HTTP/1.1 429 Too Many Requests<br>
+Retry-After: 30<br>
+X-RateLimit-Limit: 30<br>
+X-RateLimit-Remaining: 0<br>
+X-RateLimit-Reset: 1703001630<br>
+Content-Type: application/json<br>
+<br>
+{<br>
+&nbsp;&nbsp;"error": "RateLimitExceeded",<br>
+&nbsp;&nbsp;"message": "You've exceeded your rate limit",<br>
+&nbsp;&nbsp;"retry_after_seconds": 30<br>
+}
+                    </div>
+                    <p><em>Client should wait 30 seconds before retrying</em></p>
+                </div>
+            </section>
+            
+            <!-- Summary Section -->
+            <section id="summary">
+                <h2>📌 Key Takeaways: Session 2 Summary</h2>
+                
+                <div class="summary-box">
+                    <h4>1. HTTP Methods</h4>
+                    <p>GET (read), POST (create), PUT (replace), PATCH (update), DELETE (remove), HEAD, OPTIONS. Each has specific semantics and idempotency guarantees.</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>2. Status Codes</h4>
+                    <p>2xx (success), 3xx (redirect), 4xx (client error), 5xx (server error). Status codes tell clients what happened with their request.</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>3. Headers</h4>
+                    <p>Metadata in requests and responses. Authorization, Content-Type, Cache-Control, CORS headers, and custom headers enable communication details.</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>4. API Keys</h4>
+                    <p>Credentials for authentication and access control. Keep secret keys secure, use environment variables, and monitor usage.</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>5. Complete Interactions</h4>
+                    <p>Real API calls combine methods, headers, status codes, and JSON data to accomplish tasks. Understanding each piece helps you design robust APIs.</p>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p><strong>FastAPI Course - Session 2: How APIs Communicate</strong></p>
+            <p>Duration: 2 Hours | Content Delivery Only</p>
+            <p>© 2024 API Development Course | All Rights Reserved</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session 1: What is an API? - FastAPI Course</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .duration {
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+        
+        nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav a {
+            background: white;
+            color: #667eea;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            border: 2px solid #667eea;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        nav a:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            scroll-margin-top: 100px;
+        }
+        
+        section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        section h3 {
+            color: #764ba2;
+            font-size: 1.4em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .learning-objectives {
+            background: #e7f3ff;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        
+        .learning-objectives h3 {
+            margin-top: 0;
+        }
+        
+        .learning-objectives li {
+            margin: 8px 0;
+            margin-left: 20px;
+        }
+        
+        .example-box {
+            background: #f5f5f5;
+            border-left: 4px solid #764ba2;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .example-box h4 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+        
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-family: monospace;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .comparison-table tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .key-concept {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .key-concept strong {
+            color: #ff6b6b;
+        }
+        
+        .exercise {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .exercise h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .time-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .time-box strong {
+            color: #856404;
+        }
+        
+        .qa-section {
+            background: #f3e5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #9c27b0;
+        }
+        
+        .qa-section h4 {
+            color: #6a1b9a;
+            margin-bottom: 10px;
+        }
+        
+        .qa-pair {
+            margin: 15px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 3px;
+        }
+        
+        .qa-pair strong {
+            color: #667eea;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border-top: 2px solid #ddd;
+        }
+        
+        .nav-button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+        
+        .breadcrumb {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background-color: #fff59d;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        
+        .summary-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .summary-box h4 {
+            color: #1565c0;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Session 1: What is an API?</h1>
+            <p>Understanding the Foundation of Modern Web Communication</p>
+            <div class="duration">⏱️ 2 Hours</div>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#objectives">Learning Objectives</a></li>
+                <li><a href="#intro">Introduction</a></li>
+                <li><a href="#client-server">Client vs Server</a></li>
+                <li><a href="#req-res">Request vs Response</a></li>
+                <li><a href="#json">JSON Basics</a></li>
+                <li><a href="#genai">GenAI Examples</a></li>
+                <li><a href="#summary">Summary</a></li>
+                <li><a href="#qa">Q&A</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <div class="breadcrumb">FastAPI Course > Session 1 > What is an API?</div>
+            
+            <!-- Learning Objectives Section -->
+            <section id="objectives">
+                <h2>📚 Learning Objectives</h2>
+                <div class="learning-objectives">
+                    <h3>By the end of this session, you will be able to:</h3>
+                    <ul>
+                        <li>Define what an API is and explain its purpose in modern applications</li>
+                        <li>Understand the client-server architecture and how components interact</li>
+                        <li>Differentiate between API requests and responses</li>
+                        <li>Work with JSON data format and understand its structure</li>
+                        <li>Recognize how APIs are used in real-world GenAI applications</li>
+                        <li>Identify patterns and best practices in API design</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Introduction Section -->
+            <section id="intro">
+                <h2>🎯 Introduction: What is an API?</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 15px;">
+                    An <strong>API (Application Programming Interface)</strong> is a set of rules and protocols that allows different software applications to communicate with each other. Think of it as a waiter in a restaurant who takes your order and brings you the food.
+                </p>
+                
+                <div class="key-concept">
+                    <strong>Key Definition:</strong> An API is a bridge between different applications that allows them to exchange data and request services from each other in a standardized way.
+                </div>
+                
+                <h3>Why Do We Need APIs?</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li><strong>Integration:</strong> Allows different systems to work together seamlessly</li>
+                    <li><strong>Reusability:</strong> Use functionality from other applications without rebuilding it</li>
+                    <li><strong>Scalability:</strong> Build complex systems by combining smaller, specialized services</li>
+                    <li><strong>Standardization:</strong> Provides a consistent way for applications to communicate</li>
+                    <li><strong>Security:</strong> Controls what data is exposed and how it's accessed</li>
+                </ul>
+                
+                <h3>Real-World Analogy</h3>
+                <div class="example-box">
+                    <h4>📱 Mobile App Weather Example</h4>
+                    <p>Your weather app doesn't collect data from weather stations worldwide. Instead, it:</p>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Sends a request to a weather service API (like OpenWeatherMap)</li>
+                        <li>Passes your location as a parameter</li>
+                        <li>Receives formatted weather data back</li>
+                        <li>Displays it beautifully on your screen</li>
+                    </ol>
+                </div>
+            </section>
+            
+            <!-- Client vs Server Section -->
+            <section id="client-server">
+                <h2>🖥️ Client vs Server: The Architecture</h2>
+                
+                <h3>What is a Client?</h3>
+                <p>A client is any application or device that <strong>requests</strong> data or services. Examples:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Web browsers (Chrome, Firefox, Safari)</li>
+                    <li>Mobile applications (iOS, Android apps)</li>
+                    <li>Desktop software</li>
+                    <li>Another backend server</li>
+                </ul>
+                
+                <h3>What is a Server?</h3>
+                <p>A server is a computer or application that <strong>responds</strong> to requests with data or services. It:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Listens for incoming requests</li>
+                    <li>Processes the request</li>
+                    <li>Sends back a response</li>
+                    <li>Runs continuously to handle multiple requests</li>
+                </ul>
+                
+                <h3>How They Communicate</h3>
+                <div class="diagram">
+                    ┌─────────────┐                    ┌─────────────┐<br>
+                    │   CLIENT    │───Request────────→│   SERVER    │<br>
+                    │  (Browser/  │←───Response───────│  (API/      │<br>
+                    │   Mobile)   │                    │  Backend)   │<br>
+                    └─────────────┘                    └─────────────┘
+                </div>
+                
+                <h3>Client-Server Model Benefits</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Client</th>
+                            <th>Server</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Role</strong></td>
+                            <td>Initiates requests</td>
+                            <td>Processes and responds</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Storage</strong></td>
+                            <td>Limited (browser cache, device memory)</td>
+                            <td>Large (databases, file systems)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Processing</strong></td>
+                            <td>User-side operations</td>
+                            <td>Business logic, security, data validation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Examples</strong></td>
+                            <td>Web pages, mobile apps, desktop apps</td>
+                            <td>Web servers, APIs, databases</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~15 minutes spent. About 1 hour 45 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- Request vs Response Section -->
+            <section id="req-res">
+                <h2>📨 Requests vs Responses: The Conversation</h2>
+                
+                <h3>Understanding an API Request</h3>
+                <p>A request is what a client sends to a server. It contains:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li><strong>URL/Endpoint:</strong> Where to send the request</li>
+                    <li><strong>Method:</strong> What action to perform (GET, POST, etc.)</li>
+                    <li><strong>Headers:</strong> Metadata about the request (content type, authentication)</li>
+                    <li><strong>Body:</strong> Data being sent (optional, usually for POST)</li>
+                    <li><strong>Parameters:</strong> Query parameters or path variables</li>
+                </ul>
+                
+                <div class="example-box">
+                    <h4>📝 Example API Request</h4>
+                    <div class="code-block">
+GET /api/users/123 HTTP/1.1<br>
+Host: example.com<br>
+Authorization: Bearer your_token_here<br>
+Content-Type: application/json<br>
+<br>
+(Body can be empty for GET requests)
+                    </div>
+                    <p><strong>Breaking it down:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><span class="highlight">GET</span> - The HTTP method (retrieve data)</li>
+                        <li><span class="highlight">/api/users/123</span> - The endpoint with ID parameter</li>
+                        <li><span class="highlight">Authorization header</span> - Security token for authentication</li>
+                    </ul>
+                </div>
+                
+                <h3>Understanding an API Response</h3>
+                <p>A response is what the server sends back. It includes:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li><strong>Status Code:</strong> Indicates success/failure (200, 404, 500, etc.)</li>
+                    <li><strong>Headers:</strong> Metadata about the response</li>
+                    <li><strong>Body:</strong> The actual data (usually in JSON format)</li>
+                </ul>
+                
+                <div class="example-box">
+                    <h4>✅ Example Successful Response</h4>
+                    <div class="code-block">
+HTTP/1.1 200 OK<br>
+Content-Type: application/json<br>
+Content-Length: 256<br>
+<br>
+{<br>
+&nbsp;&nbsp;"id": 123,<br>
+&nbsp;&nbsp;"name": "John Doe",<br>
+&nbsp;&nbsp;"email": "john@example.com",<br>
+&nbsp;&nbsp;"status": "active"<br>
+}
+                    </div>
+                    <p><strong>Breaking it down:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><span class="highlight">200 OK</span> - Request was successful</li>
+                        <li><span class="highlight">Content-Type: application/json</span> - Response format</li>
+                        <li>Body contains the requested user data</li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>❌ Example Error Response</h4>
+                    <div class="code-block">
+HTTP/1.1 404 Not Found<br>
+Content-Type: application/json<br>
+<br>
+{<br>
+&nbsp;&nbsp;"error": "User not found",<br>
+&nbsp;&nbsp;"message": "No user with ID 123 exists",<br>
+&nbsp;&nbsp;"status_code": 404<br>
+}
+                    </div>
+                </div>
+                
+                <h3>Common HTTP Status Codes</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Status Code</th>
+                            <th>Meaning</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>200</strong></td>
+                            <td>OK - Request successful</td>
+                            <td>Data retrieved successfully</td>
+                        </tr>
+                        <tr>
+                            <td><strong>201</strong></td>
+                            <td>Created - Resource created</td>
+                            <td>New user created</td>
+                        </tr>
+                        <tr>
+                            <td><strong>400</strong></td>
+                            <td>Bad Request - Invalid data</td>
+                            <td>Missing required field</td>
+                        </tr>
+                        <tr>
+                            <td><strong>401</strong></td>
+                            <td>Unauthorized - Authentication required</td>
+                            <td>Invalid or missing API key</td>
+                        </tr>
+                        <tr>
+                            <td><strong>404</strong></td>
+                            <td>Not Found - Resource doesn't exist</td>
+                            <td>User ID doesn't exist</td>
+                        </tr>
+                        <tr>
+                            <td><strong>500</strong></td>
+                            <td>Server Error - Server problem</td>
+                            <td>Database connection failed</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- JSON Basics Section -->
+            <section id="json">
+                <h2>📋 JSON Basics: Data Format</h2>
+                
+                <p>JSON (JavaScript Object Notation) is the standard format for exchanging data in APIs. It's human-readable, lightweight, and universally supported.</p>
+                
+                <h3>JSON Data Types</h3>
+                
+                <div class="example-box">
+                    <h4>🔢 Numbers</h4>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"age": 25,<br>
+&nbsp;&nbsp;"price": 19.99,<br>
+&nbsp;&nbsp;"temperature": -5<br>
+}
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>📝 Strings</h4>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"name": "Alice Johnson",<br>
+&nbsp;&nbsp;"email": "alice@example.com",<br>
+&nbsp;&nbsp;"message": "Hello, World!"<br>
+}
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>✓/✗ Booleans</h4>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"is_active": true,<br>
+&nbsp;&nbsp;"is_admin": false,<br>
+&nbsp;&nbsp;"is_verified": true<br>
+}
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>📚 Arrays (Lists)</h4>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"hobbies": ["reading", "coding", "gaming"],<br>
+&nbsp;&nbsp;"scores": [95, 87, 92],<br>
+&nbsp;&nbsp;"empty_list": []<br>
+}
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🏢 Objects (Nested)</h4>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"user": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"name": "Bob Smith",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"address": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"street": "123 Main St",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"city": "New York"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
+}
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>⚪ Null Value</h4>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"phone": null,<br>
+&nbsp;&nbsp;"nickname": null<br>
+}
+                    </div>
+                </div>
+                
+                <h3>Complete JSON Example: User Profile API Response</h3>
+                <div class="example-box">
+                    <h4>💼 Real-world JSON Structure</h4>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"id": 1001,<br>
+&nbsp;&nbsp;"name": "Sarah Williams",<br>
+&nbsp;&nbsp;"email": "sarah@example.com",<br>
+&nbsp;&nbsp;"age": 28,<br>
+&nbsp;&nbsp;"is_active": true,<br>
+&nbsp;&nbsp;"roles": ["user", "moderator"],<br>
+&nbsp;&nbsp;"profile": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"bio": "Software developer and AI enthusiast",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"location": "San Francisco, CA",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"joined_date": "2022-01-15"<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;"social_media": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"twitter": "@sarah_dev",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"github": "sarah-williams"<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;"phone": null<br>
+}
+                    </div>
+                </div>
+                
+                <h3>JSON Rules to Remember</h3>
+                <div class="key-concept">
+                    <ul style="margin-left: 20px;">
+                        <li>✓ Keys must be in <strong>double quotes</strong></li>
+                        <li>✓ String values must be in <strong>double quotes</strong></li>
+                        <li>✓ Numbers, booleans, and null don't need quotes</li>
+                        <li>✓ Comma separates items but <strong>NOT after the last item</strong></li>
+                        <li>✗ Single quotes are NOT valid in JSON</li>
+                        <li>✗ Trailing commas will cause errors</li>
+                        <li>✗ Comments are NOT allowed in JSON</li>
+                    </ul>
+                </div>
+                
+                <div class="exercise">
+                    <h4>✏️ Exercise: Identify the JSON Errors</h4>
+                    <p>Can you spot what's wrong with this JSON? (Hint: there are 3 errors)</p>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;'name': 'John', // This is a comment<br>
+&nbsp;&nbsp;"age": 30,<br>
+&nbsp;&nbsp;"email": "john@example.com",<br>
+}
+                    </div>
+                    <p><strong>Answers:</strong></p>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Keys use single quotes instead of double quotes</li>
+                        <li>Comments (// ...) are not allowed in JSON</li>
+                        <li>Trailing comma after "john@example.com",</li>
+                    </ol>
+                </div>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~40 minutes spent. About 1 hour 20 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- GenAI Examples Section -->
+            <section id="genai">
+                <h2>🤖 API Examples in GenAI Applications</h2>
+                
+                <p>Modern AI and GenAI applications heavily rely on APIs to function. Let's explore some real-world examples:</p>
+                
+                <h3>1. ChatGPT/OpenAI API</h3>
+                <div class="example-box">
+                    <h4>🔄 How it works:</h4>
+                    <p>Your application sends a message, OpenAI's API processes it with a language model, and returns a response.</p>
+                    
+                    <p><strong>Request:</strong></p>
+                    <div class="code-block">
+POST /v1/chat/completions<br>
+Host: api.openai.com<br>
+Authorization: Bearer sk-your-api-key<br>
+<br>
+{<br>
+&nbsp;&nbsp;"model": "gpt-4",<br>
+&nbsp;&nbsp;"messages": [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"role": "user",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"content": "What is machine learning?"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;"temperature": 0.7<br>
+}
+                    </div>
+                    
+                    <p><strong>Response:</strong></p>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"id": "chatcmpl-8P9Dn",<br>
+&nbsp;&nbsp;"object": "chat.completion",<br>
+&nbsp;&nbsp;"created": 1699000000,<br>
+&nbsp;&nbsp;"model": "gpt-4",<br>
+&nbsp;&nbsp;"choices": [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"message": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"role": "assistant",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"content": "Machine learning is a subset of AI..."<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"finish_reason": "stop"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;]<br>
+}
+                    </div>
+                </div>
+                
+                <h3>2. Google Search API</h3>
+                <div class="example-box">
+                    <h4>🔍 How it works:</h4>
+                    <p>Your app sends a search query, Google returns relevant results with snippets and links.</p>
+                    
+                    <p><strong>Request:</strong></p>
+                    <div class="code-block">
+GET /customsearch/v1?q=python%20fastapi&key=YOUR_API_KEY
+                    </div>
+                    
+                    <p><strong>Response (simplified):</strong></p>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"items": [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"title": "FastAPI",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"link": "https://fastapi.tiangolo.com",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"snippet": "FastAPI is a modern...",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"pagemap": {...}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;]<br>
+}
+                    </div>
+                </div>
+                
+                <h3>3. Weather API (OpenWeatherMap)</h3>
+                <div class="example-box">
+                    <h4>☀️ How it works:</h4>
+                    <p>Your weather app sends coordinates, gets back current weather and forecast data.</p>
+                    
+                    <p><strong>Request:</strong></p>
+                    <div class="code-block">
+GET /data/2.5/weather?lat=40.71&lon=-74.01&appid=YOUR_API_KEY
+                    </div>
+                    
+                    <p><strong>Response:</strong></p>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"coord": {"lon": -74.01, "lat": 40.71},<br>
+&nbsp;&nbsp;"weather": [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": 800,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"main": "Clear",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"description": "clear sky"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;"main": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"temp": 72.5,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"feels_like": 71.2,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"humidity": 65<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;"wind": {"speed": 8.5}<br>
+}
+                    </div>
+                </div>
+                
+                <h3>4. Stripe Payment API</h3>
+                <div class="example-box">
+                    <h4>💳 How it works:</h4>
+                    <p>E-commerce platforms use Stripe API to process payments securely without storing card details.</p>
+                    
+                    <p><strong>Request:</strong></p>
+                    <div class="code-block">
+POST /v1/charges<br>
+Authorization: Bearer sk_live_xxx<br>
+<br>
+{<br>
+&nbsp;&nbsp;"amount": 2000,<br>
+&nbsp;&nbsp;"currency": "usd",<br>
+&nbsp;&nbsp;"source": "tok_visa",<br>
+&nbsp;&nbsp;"description": "Purchase of AI course"<br>
+}
+                    </div>
+                    
+                    <p><strong>Response:</strong></p>
+                    <div class="code-block">
+{<br>
+&nbsp;&nbsp;"id": "ch_1234567890",<br>
+&nbsp;&nbsp;"object": "charge",<br>
+&nbsp;&nbsp;"amount": 2000,<br>
+&nbsp;&nbsp;"currency": "usd",<br>
+&nbsp;&nbsp;"status": "succeeded",<br>
+&nbsp;&nbsp;"receipt_email": "customer@example.com"<br>
+}
+                    </div>
+                </div>
+                
+                <h3>5. Building Your Own GenAI API with FastAPI</h3>
+                <div class="key-concept">
+                    <strong>What you'll learn in this course:</strong> How to build APIs that integrate with GenAI services, handle requests efficiently, validate data, and return intelligent responses.
+                </div>
+                
+                <div class="example-box">
+                    <h4>🚀 Sneak Peek: Your First FastAPI Endpoint</h4>
+                    <p>You'll create something like this:</p>
+                    <div class="code-block">
+from fastapi import FastAPI<br>
+<br>
+app = FastAPI()<br>
+<br>
+@app.get("/api/hello")<br>
+async def say_hello(name: str = "World"):<br>
+&nbsp;&nbsp;return {"message": f"Hello, {name}!"}
+                    </div>
+                    <p>When a client makes a request to <span class="highlight">GET /api/hello?name=Alice</span>, they get:</p>
+                    <div class="code-block">
+{"message": "Hello, Alice!"}
+                    </div>
+                </div>
+                
+                <div class="time-box">
+                    <strong>⏱️ Time Check:</strong> ~50 minutes spent. About 1 hour 10 minutes remaining.
+                </div>
+            </section>
+            
+            <!-- Summary Section -->
+            <section id="summary">
+                <h2>📌 Key Takeaways: Session 1 Summary</h2>
+                
+                <div class="summary-box">
+                    <h4>1. What is an API?</h4>
+                    <p>An API is a bridge between applications that allows them to exchange data and request services in a standardized way.</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>2. Client-Server Architecture</h4>
+                    <p>Clients make requests, servers process them and send responses. This separation of concerns enables scalable, maintainable systems.</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>3. Requests & Responses</h4>
+                    <p>Every API interaction consists of a request (with method, URL, headers, body) and a response (with status code, headers, body).</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>4. JSON Format</h4>
+                    <p>JSON is the universal language of APIs, supporting strings, numbers, booleans, arrays, objects, and null values.</p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>5. GenAI Applications</h4>
+                    <p>Modern AI apps like ChatGPT, search engines, payment processors, and weather apps all rely on APIs to function.</p>
+                </div>
+            </section>
+            
+            <!-- Q&A Section -->
+            <section id="qa">
+                <h2>❓ Common Questions & Answers</h2>
+                
+                <div class="qa-section">
+                    <div class="qa-pair">
+                        <strong>Q: What's the difference between an API and a website?</strong>
+                        <p><strong>A:</strong> A website returns HTML/CSS/JavaScript to display in a browser. An API returns structured data (usually JSON) for programs to process. APIs are "headless" (no visual interface).</p>
+                    </div>
+                    
+                    <div class="qa-pair">
+                        <strong>Q: Can a client be a server?</strong>
+                        <p><strong>A:</strong> Yes! A backend service can be a client to another API. For example, your FastAPI app might be a client to OpenAI's API.</p>
+                    </div>
+                    
+                    <div class="qa-pair">
+                        <strong>Q: Why JSON instead of XML or other formats?</strong>
+                        <p><strong>A:</strong> JSON is lightweight, human-readable, and natively supported in JavaScript and most programming languages. It became the industry standard.</p>
+                    </div>
+                    
+                    <div class="qa-pair">
+                        <strong>Q: What does "RESTful" mean?</strong>
+                        <p><strong>A:</strong> REST (Representational State Transfer) is an architectural style for APIs using HTTP methods (GET, POST, PUT, DELETE) on resources. We'll cover this deeply in Session 2.</p>
+                    </div>
+                    
+                    <div class="qa-pair">
+                        <strong>Q: Is every 200 status code response successful?</strong>
+                        <p><strong>A:</strong> Yes, 200-299 codes indicate success. 2xx means the server understood and fulfilled the request correctly.</p>
+                    </div>
+                    
+                    <div class="qa-pair">
+                        <strong>Q: Can I see actual API requests being made?</strong>
+                        <p><strong>A:</strong> Yes! Open your browser's Developer Tools (F12), go to Network tab, and refresh a website. You'll see all the requests and responses.</p>
+                    </div>
+                    
+                    <div class="qa-pair">
+                        <strong>Q: Do all APIs use JSON?</strong>
+                        <p><strong>A:</strong> Not all, but most modern APIs do. Some use XML, Protocol Buffers, or MessagePack. JSON is most common for web APIs.</p>
+                    </div>
+                    
+                    <div class="qa-pair">
+                        <strong>Q: What's "CORS" and why does it matter?</strong>
+                        <p><strong>A:</strong> CORS (Cross-Origin Resource Sharing) is a security mechanism. By default, browsers block requests from one domain to another. We'll handle this in FastAPI soon!</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Practical Exercise -->
+            <section>
+                <h2>🎓 Practical Activity (30 minutes)</h2>
+                
+                <div class="exercise">
+                    <h4>Activity: Exploring Real APIs with Browser DevTools</h4>
+                    <p><strong>Objective:</strong> See actual API requests and responses in action.</p>
+                    
+                    <p><strong>Steps:</strong></p>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Open any website (e.g., Twitter, GitHub, Gmail)</li>
+                        <li>Press <strong>F12</strong> to open Developer Tools</li>
+                        <li>Go to the <strong>Network</strong> tab</li>
+                        <li>Refresh the page or interact with the site</li>
+                        <li>Click on different requests to see:
+                            <ul style="margin-left: 20px; margin-top: 5px;">
+                                <li>Request URL and method</li>
+                                <li>Request headers and body</li>
+                                <li>Response status code</li>
+                                <li>Response headers and body (usually JSON or HTML)</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    
+                    <p><strong>Reflection Questions:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>How many API requests happen when you load a single page?</li>
+                        <li>What status codes did you see?</li>
+                        <li>Can you identify JSON responses?</li>
+                        <li>Which requests used authentication headers?</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Next Steps -->
+            <section>
+                <h2>🚀 What's Next?</h2>
+                
+                <div class="key-concept">
+                    <strong>Session 2: How APIs Communicate</strong><br>
+                    <p style="margin-top: 10px;">We'll dive deeper into HTTP methods, status codes, headers, and API keys. You'll understand the complete communication protocol!</p>
+                </div>
+                
+                <h3>Before the Next Session:</h3>
+                <ul style="margin-left: 20px;">
+                    <li>Try the browser DevTools exercise above</li>
+                    <li>Review the JSON examples and practice creating valid JSON</li>
+                    <li>Think of 3 apps you use daily and what APIs they might use</li>
+                    <li>Optional: Bookmark the JSON documentation (json.org)</li>
+                </ul>
+            </section>
+        </div>
+        
+        <footer>
+            <p><strong>FastAPI Course - Session 1: What is an API?</strong></p>
+            <p>Duration: 2 Hours | Date: 2 Hours Session | Self-paced Learning Module</p>
+            <p>© 2024 API Development Course | All Rights Reserved</p>
+            <p style="margin-top: 20px; font-size: 0.9em;">
+                <strong>Ready for Session 2?</strong> Let me know when you're prepared, and I'll create the next session!
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
