@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session 4: Sending Data to APIs - FastAPI Course</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        main {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        h3 {
+            color: #764ba2;
+            font-size: 1.4em;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        
+        h4 {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        .learning-objectives {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        
+        .learning-objectives h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        
+        .learning-objectives ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .learning-objectives li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .learning-objectives li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .key-concept {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.1));
+            padding: 20px;
+            border-left: 5px solid #667eea;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .key-concept strong {
+            color: #667eea;
+        }
+        
+        .example-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-left: 5px solid #764ba2;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .example-box h4 {
+            margin-top: 0;
+            color: #764ba2;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin: 15px 0;
+        }
+        
+        .time-box {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%);
+            padding: 15px;
+            border-left: 5px solid #ff9800;
+            border-radius: 5px;
+            margin: 20px 0;
+            color: #e65100;
+            font-weight: 500;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #ffe6e6 0%, #ffcccc 100%);
+            padding: 20px;
+            border-left: 5px solid #f44336;
+            border-radius: 5px;
+            margin: 20px 0;
+            color: #c62828;
+        }
+        
+        .warning-box strong {
+            color: #f44336;
+        }
+        
+        .installation-box {
+            background: linear-gradient(135deg, #e6f7ff 0%, #cce7ff 100%);
+            padding: 20px;
+            border-left: 5px solid #2196f3;
+            border-radius: 5px;
+            margin: 20px 0;
+            color: #01579b;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .comparison-table th {
+            background: #764ba2;
+        }
+        
+        strong {
+            color: #667eea;
+        }
+        
+        code {
+            background: #f0f0f0;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #c7254e;
+        }
+        
+        .summary-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        
+        .summary-box h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        
+        footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            background: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Session 4: Sending Data to APIs</h1>
+            <p>Master POST requests, request bodies, and data validation</p>
+        </header>
+        
+        <main>
+            <!-- Learning Objectives -->
+            <section>
+                <div class="learning-objectives">
+                    <h3>📚 Learning Objectives</h3>
+                    <ul>
+                        <li>Understand the difference between GET and POST requests</li>
+                        <li>Learn how to send data in request bodies</li>
+                        <li>Master Pydantic models for request validation</li>
+                        <li>Implement proper error handling and status codes</li>
+                        <li>Handle optional and required fields in requests</li>
+                        <li>Validate data with constraints and patterns</li>
+                        <li>Create real-world API endpoints that accept complex data</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Section 1: GET vs POST -->
+            <section>
+                <h2>1️⃣ GET vs POST: Choosing the Right Method</h2>
+                
+                <p>In the previous session, we learned about HTTP methods. Now let's dive deep into the two most common methods for working with data: <strong>GET</strong> and <strong>POST</strong>.</p>
+                
+                <h3>When to Use GET</h3>
+                <p>GET requests are used to <strong>retrieve</strong> data from the server. They:</p>
+                <ul>
+                    <li>Send data in the URL (query parameters)</li>
+                    <li>Are cached by browsers</li>
+                    <li>Have URL length limitations (~2KB)</li>
+                    <li>Are idempotent (safe to call multiple times)</li>
+                    <li>Should not modify server state</li>
+                </ul>
+                
+                <div class="example-box">
+                    <h4>✓ Good Use Cases for GET</h4>
+                    <div class="code-block">
+# Retrieve user by ID
+GET /api/users/123
+
+# Search with filters
+GET /api/products?category=electronics&price_max=500
+
+# Get paginated results
+GET /api/posts?page=1&limit=10
+
+# Get user profile
+GET /api/me/profile
+                    </div>
+                </div>
+                
+                <h3>When to Use POST</h3>
+                <p>POST requests are used to <strong>create</strong> new data on the server. They:</p>
+                <ul>
+                    <li>Send data in the request body</li>
+                    <li>Can send large amounts of data (limited by server config)</li>
+                    <li>Are not cached by default</li>
+                    <li>Typically return HTTP 201 (Created)</li>
+                    <li>Change server state</li>
+                </ul>
+                
+                <div class="example-box">
+                    <h4>✓ Good Use Cases for POST</h4>
+                    <div class="code-block">
+# Create new user
+POST /api/users
+{
+  "name": "John",
+  "email": "john@example.com",
+  "password": "secure_password"
+}
+
+# Submit form data
+POST /api/contact
+{
+  "subject": "Help needed",
+  "message": "I have a question",
+  "email": "user@example.com"
+}
+
+# Upload file with metadata
+POST /api/documents
+{
+  "title": "My Document",
+  "file": "...",
+  "tags": ["important", "review"]
+}
+                    </div>
+                </div>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>GET</th>
+                            <th>POST</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Purpose</strong></td>
+                            <td>Retrieve data</td>
+                            <td>Create/Submit data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Location</strong></td>
+                            <td>URL (query params)</td>
+                            <td>Request body</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Size</strong></td>
+                            <td>Limited (~2KB)</td>
+                            <td>Large (configurable)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Idempotent</strong></td>
+                            <td>Yes (safe)</td>
+                            <td>No (creates resources)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cached</strong></td>
+                            <td>Yes (by default)</td>
+                            <td>No (by default)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Response Status</strong></td>
+                            <td>200 OK</td>
+                            <td>201 Created</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- Section 2: Request Bodies -->
+            <section>
+                <h2>2️⃣ Understanding Request Bodies</h2>
+                
+                <p>A request body is the data sent with a request. In FastAPI, we use <strong>Pydantic models</strong> to define and validate request bodies.</p>
+                
+                <h3>What is a Request Body?</h3>
+                <p>The request body is the "payload" of data sent to the server. It's typically formatted as JSON and contains all the data needed to create or update a resource.</p>
+                
+                <div class="key-concept">
+                    <strong>Key Concept:</strong> A request body is optional for GET requests but required for POST, PUT, and PATCH requests. The body contains structured data that the server needs to process.
+                </div>
+                
+                <h3>Anatomy of a Request with Body</h3>
+                
+                <div class="example-box">
+                    <h4>Complete HTTP Request with Body</h4>
+                    <div class="code-block">
+POST /api/users HTTP/1.1
+Host: api.example.com
+Content-Type: application/json
+Content-Length: 89
+
+{
+  "name": "Alice Johnson",
+  "email": "alice@example.com",
+  "age": 28,
+  "is_active": true
+}
+                    </div>
+                </div>
+                
+                <p>Breaking this down:</p>
+                <ul>
+                    <li><strong>Request Line:</strong> <code>POST /api/users HTTP/1.1</code> - Method, path, protocol</li>
+                    <li><strong>Headers:</strong> Metadata about the request (content type, length, etc.)</li>
+                    <li><strong>Body:</strong> The actual JSON data to be sent</li>
+                </ul>
+                
+                <h3>Defining a Pydantic Model for Request Body</h3>
+                
+                <div class="example-box">
+                    <h4>Basic Pydantic Model</h4>
+                    <div class="code-block">
+from pydantic import BaseModel
+
+class User(BaseModel):
+    name: str
+    email: str
+    age: int
+    is_active: bool = True  # Optional with default
+
+# FastAPI automatically validates request bodies
+@app.post("/api/users")
+def create_user(user: User):
+    # user.name, user.email, user.age are guaranteed valid
+    return {"message": "User created", "user": user}
+                    </div>
+                </div>
+                
+                <div class="key-concept">
+                    <strong>Key Concept:</strong> When you define a parameter with a Pydantic model type, FastAPI automatically:
+                    <ul>
+                        <li>Expects JSON in the request body</li>
+                        <li>Validates each field against the type annotation</li>
+                        <li>Converts JSON strings to Python objects</li>
+                        <li>Returns 422 error if validation fails</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Section 3: Pydantic Validation -->
+            <section>
+                <h2>3️⃣ Pydantic Models: Advanced Validation</h2>
+                
+                <p>Pydantic is a Python library for data validation using type annotations. It ensures that data is correct before your code processes it.</p>
+                
+                <h3>Type Validation</h3>
+                <p>The simplest form of validation is using Python type hints:</p>
+                
+                <div class="example-box">
+                    <h4>Type Validation Example</h4>
+                    <div class="code-block">
+from pydantic import BaseModel
+
+class Product(BaseModel):
+    name: str          # Must be a string
+    price: float       # Must be a number
+    stock: int         # Must be an integer
+    in_stock: bool     # Must be true or false
+
+# Valid request:
+# {"name": "Laptop", "price": 999.99, "stock": 5, "in_stock": true}
+
+# Invalid request (will return 422 error):
+# {"name": "Laptop", "price": "expensive", "stock": 5, "in_stock": true}
+#                                ↑ "expensive" is not a number
+                    </div>
+                </div>
+                
+                <h3>Optional Fields</h3>
+                <p>Use <code>Optional</code> to make fields optional:</p>
+                
+                <div class="example-box">
+                    <h4>Optional Fields</h4>
+                    <div class="code-block">
+from typing import Optional
+from pydantic import BaseModel
+
+class BlogPost(BaseModel):
+    title: str
+    content: str
+    author: str
+    tags: Optional[list] = None  # Optional, defaults to None
+    views: Optional[int] = 0     # Optional, defaults to 0
+
+# All valid:
+# {"title": "Hello", "content": "...", "author": "John"}
+# {"title": "Hello", "content": "...", "author": "John", "tags": ["python"]}
+# {"title": "Hello", "content": "...", "author": "John", "tags": [], "views": 100}
+                    </div>
+                </div>
+                
+                <h3>Field Validation with Constraints</h3>
+                <p>Use the <code>Field</code> class to add validation constraints:</p>
+                
+                <div class="example-box">
+                    <h4>Using Field for Validation</h4>
+                    <div class="code-block">
+from pydantic import BaseModel, Field
+
+class User(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    email: str = Field(...)
+    age: int = Field(..., ge=0, le=150)  # >= 0, <= 150
+    username: str = Field(..., min_length=3, max_length=20)
+    bio: str = Field(default="", max_length=500)
+
+# Valid:
+# {"name": "John", "email": "john@example.com", "age": 30, "username": "john_doe"}
+
+# Invalid (age out of range):
+# {"name": "John", "email": "john@example.com", "age": 200, "username": "john_doe"}
+                    </div>
+                </div>
+                
+                <h3>Common Field Constraints</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Constraint</th>
+                            <th>Purpose</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>min_length</code></td>
+                            <td>Minimum string length</td>
+                            <td><code>min_length=3</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>max_length</code></td>
+                            <td>Maximum string length</td>
+                            <td><code>max_length=50</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>gt</code></td>
+                            <td>Greater than</td>
+                            <td><code>gt=0</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>ge</code></td>
+                            <td>Greater than or equal</td>
+                            <td><code>ge=0</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>lt</code></td>
+                            <td>Less than</td>
+                            <td><code>lt=100</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>le</code></td>
+                            <td>Less than or equal</td>
+                            <td><code>le=100</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>regex</code></td>
+                            <td>Regular expression pattern</td>
+                            <td><code>regex="^[a-z]+$"</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Nested Models</h3>
+                <p>You can nest Pydantic models to represent complex data structures:</p>
+                
+                <div class="example-box">
+                    <h4>Nested Models Example</h4>
+                    <div class="code-block">
+from pydantic import BaseModel
+
+class Address(BaseModel):
+    street: str
+    city: str
+    country: str
+    zip_code: str
+
+class Customer(BaseModel):
+    name: str
+    email: str
+    address: Address  # Nested model
+
+# Request body:
+# {
+#   "name": "John",
+#   "email": "john@example.com",
+#   "address": {
+#     "street": "123 Main St",
+#     "city": "New York",
+#     "country": "USA",
+#     "zip_code": "10001"
+#   }
+# }
+
+@app.post("/customers")
+def create_customer(customer: Customer):
+    return customer  # All data is validated
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 4: Error Handling -->
+            <section>
+                <h2>4️⃣ Error Handling and Status Codes</h2>
+                
+                <p>Proper error handling is crucial for API reliability. Users need to know what went wrong and how to fix it.</p>
+                
+                <h3>HTTP Status Codes for Data Submission</h3>
+                
+                <div class="example-box">
+                    <h4>Success Status Codes</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Use Case</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>200</strong></td>
+                                <td>OK</td>
+                                <td>Request succeeded, data returned</td>
+                            </tr>
+                            <tr>
+                                <td><strong>201</strong></td>
+                                <td>Created</td>
+                                <td>Resource successfully created</td>
+                            </tr>
+                            <tr>
+                                <td><strong>202</strong></td>
+                                <td>Accepted</td>
+                                <td>Request accepted for processing</td>
+                            </tr>
+                            <tr>
+                                <td><strong>204</strong></td>
+                                <td>No Content</td>
+                                <td>Success, no data to return</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Client Error Status Codes</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Use Case</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>400</strong></td>
+                                <td>Bad Request</td>
+                                <td>Invalid request format or data</td>
+                            </tr>
+                            <tr>
+                                <td><strong>401</strong></td>
+                                <td>Unauthorized</td>
+                                <td>Authentication required or failed</td>
+                            </tr>
+                            <tr>
+                                <td><strong>403</strong></td>
+                                <td>Forbidden</td>
+                                <td>User not authorized for this action</td>
+                            </tr>
+                            <tr>
+                                <td><strong>404</strong></td>
+                                <td>Not Found</td>
+                                <td>Resource doesn't exist</td>
+                            </tr>
+                            <tr>
+                                <td><strong>409</strong></td>
+                                <td>Conflict</td>
+                                <td>Data conflict (e.g., duplicate email)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>422</strong></td>
+                                <td>Unprocessable Entity</td>
+                                <td>Validation error</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h3>Validation Errors (422)</h3>
+                <p>When Pydantic validation fails, FastAPI automatically returns a 422 error with details:</p>
+                
+                <div class="example-box">
+                    <h4>422 Validation Error Response</h4>
+                    <div class="code-block">
+# Request with invalid data:
+POST /api/users
+{
+  "name": "John",
+  "email": "not-an-email",
+  "age": "thirty"
+}
+
+# Response (422 Unprocessable Entity):
+{
+  "detail": [
+    {
+      "loc": ["body", "age"],
+      "msg": "value is not a valid integer",
+      "type": "type_error.integer"
+    }
+  ]
+}
+                    </div>
+                </div>
+                
+                <h3>Custom Error Responses</h3>
+                <p>You can create custom error handling for specific scenarios:</p>
+                
+                <div class="example-box">
+                    <h4>Custom Error Handling</h4>
+                    <div class="code-block">
+from fastapi import HTTPException
+
+@app.post("/users")
+def create_user(user: User):
+    # Check for duplicate email
+    if user_exists(user.email):
+        raise HTTPException(
+            status_code=409,
+            detail="Email already registered"
+        )
+    
+    # Check age requirement
+    if user.age < 18:
+        raise HTTPException(
+            status_code=400,
+            detail="User must be at least 18 years old"
+        )
+    
+    return {"message": "User created"}
+                    </div>
+                </div>
+                
+                <h3>Processing Request Data</h3>
+                <p>Once validation passes, process the data safely:</p>
+                
+                <div class="example-box">
+                    <h4>Safely Processing Request Data</h4>
+                    <div class="code-block">
+@app.post("/articles")
+def create_article(article: Article):
+    # Data is already validated at this point
+    try:
+        # Save to database
+        db_article = save_article_to_database(article)
+        
+        # Return success response
+        return {
+            "status": "created",
+            "id": db_article.id,
+            "message": "Article published successfully"
+        }
+    except DatabaseError as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to save article"
+        )
+                    </div>
+                </div>
+                
+                <div class="warning-box">
+                    <strong>⚠️ Security Note:</strong> Always validate user input, even with Pydantic. Never trust client data. Use Pydantic for type validation, but also implement business logic validation (like checking for duplicates, age requirements, etc.).
+                </div>
+            </section>
+            
+            <!-- Section 5: Building a Complete Example -->
+            <section>
+                <h2>5️⃣ Building a Complete API Endpoint</h2>
+                
+                <p>Let's build a real-world example: an API for managing a todo list that combines everything we've learned.</p>
+                
+                <h3>Application Design</h3>
+                <div class="example-box">
+                    <h4>Todo Application Structure</h4>
+                    <div class="code-block">
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+from typing import Optional, List
+from datetime import datetime
+
+app = FastAPI(
+    title="Todo API",
+    description="Manage your todos with this API",
+    version="1.0.0"
+)
+
+# Pydantic models
+class TodoBase(BaseModel):
+    title: str = Field(..., min_length=1, max_length=200)
+    description: Optional[str] = Field(None, max_length=1000)
+    priority: int = Field(default=1, ge=1, le=5)  # 1-5 scale
+    is_completed: bool = False
+
+class TodoCreate(TodoBase):
+    pass  # Used for POST requests
+
+class Todo(TodoBase):
+    id: int
+    created_at: datetime
+
+# Mock database
+todos_db = {}
+next_id = 1
+
+# Endpoints
+@app.post("/todos", status_code=201)
+def create_todo(todo: TodoCreate):
+    global next_id
+    
+    # Validate: no empty title
+    if not todo.title.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Title cannot be empty or whitespace only"
+        )
+    
+    # Create todo
+    new_todo = Todo(
+        id=next_id,
+        title=todo.title,
+        description=todo.description,
+        priority=todo.priority,
+        is_completed=todo.is_completed,
+        created_at=datetime.now()
+    )
+    
+    todos_db[next_id] = new_todo
+    next_id += 1
+    
+    return {
+        "status": "created",
+        "todo": new_todo
+    }
+
+@app.get("/todos")
+def get_todos():
+    return list(todos_db.values())
+
+@app.get("/todos/{todo_id}")
+def get_todo(todo_id: int):
+    if todo_id not in todos_db:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Todo with id {todo_id} not found"
+        )
+    return todos_db[todo_id]
+
+@app.put("/todos/{todo_id}")
+def update_todo(todo_id: int, todo: TodoCreate):
+    if todo_id not in todos_db:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Todo with id {todo_id} not found"
+        )
+    
+    todos_db[todo_id].title = todo.title
+    todos_db[todo_id].description = todo.description
+    todos_db[todo_id].priority = todo.priority
+    todos_db[todo_id].is_completed = todo.is_completed
+    
+    return {
+        "status": "updated",
+        "todo": todos_db[todo_id]
+    }
+
+@app.delete("/todos/{todo_id}", status_code=204)
+def delete_todo(todo_id: int):
+    if todo_id not in todos_db:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Todo with id {todo_id} not found"
+        )
+    
+    del todos_db[todo_id]
+    return None
+                    </div>
+                </div>
+                
+                <h3>Testing the API</h3>
+                <p>You can test this API using curl or any HTTP client:</p>
+                
+                <div class="example-box">
+                    <h4>Example API Calls</h4>
+                    <div class="code-block">
+# Create a todo
+curl -X POST http://localhost:8000/todos \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Learn FastAPI", "priority": 5}'
+
+# Get all todos
+curl http://localhost:8000/todos
+
+# Get specific todo
+curl http://localhost:8000/todos/1
+
+# Update todo
+curl -X PUT http://localhost:8000/todos/1 \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Learn FastAPI", "priority": 4, "is_completed": true}'
+
+# Delete todo
+curl -X DELETE http://localhost:8000/todos/1
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 6: Real-World Patterns -->
+            <section>
+                <h2>6️⃣ Real-World Patterns and Best Practices</h2>
+                
+                <h3>Pattern 1: Bulk Operations</h3>
+                <p>Accept multiple items in a single request:</p>
+                
+                <div class="example-box">
+                    <h4>Bulk Create Example</h4>
+                    <div class="code-block">
+@app.post("/bulk/items")
+def create_items_bulk(items: List[ItemCreate]):
+    # Validate each item
+    created_items = []
+    for item in items:
+        new_item = save_item(item)
+        created_items.append(new_item)
+    
+    return {
+        "created_count": len(created_items),
+        "items": created_items
+    }
+
+# Request:
+# [
+#   {"name": "Item 1", "price": 10.0},
+#   {"name": "Item 2", "price": 20.0}
+# ]
+                    </div>
+                </div>
+                
+                <h3>Pattern 2: Partial Updates (PATCH)</h3>
+                <p>Allow updating only specific fields:</p>
+                
+                <div class="example-box">
+                    <h4>PATCH for Partial Updates</h4>
+                    <div class="code-block">
+from typing import Optional
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    age: Optional[int] = None
+
+@app.patch("/users/{user_id}")
+def partial_update_user(user_id: int, user_update: UserUpdate):
+    existing_user = get_user(user_id)
+    
+    # Only update provided fields
+    if user_update.name:
+        existing_user.name = user_update.name
+    if user_update.email:
+        existing_user.email = user_update.email
+    if user_update.age:
+        existing_user.age = user_update.age
+    
+    save_user(existing_user)
+    return existing_user
+
+# Request (only update name and email):
+# {"name": "New Name", "email": "newemail@example.com"}
+                    </div>
+                </div>
+                
+                <h3>Pattern 3: Response Models</h3>
+                <p>Return only specific fields in responses:</p>
+                
+                <div class="example-box">
+                    <h4>Response Models for Security</h4>
+                    <div class="code-block">
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    # Note: password is NOT included
+
+class UserCreate(BaseModel):
+    name: str
+    email: str
+    password: str
+
+@app.post("/users", response_model=UserResponse)
+def create_user(user: UserCreate):
+    # Even if UserCreate has password,
+    # response will only include id, name, email
+    new_user = save_user(user)
+    return new_user
+                    </div>
+                </div>
+                
+                <h3>Best Practices</h3>
+                <div class="key-concept">
+                    <strong>✓ Best Practices for Sending Data:</strong>
+                    <ul>
+                        <li>Use appropriate HTTP status codes (201 for created, 200 for success)</li>
+                        <li>Validate all input data with Pydantic models</li>
+                        <li>Return meaningful error messages with proper status codes</li>
+                        <li>Never expose sensitive data (passwords, keys) in responses</li>
+                        <li>Use PATCH for partial updates, PUT for full replacements</li>
+                        <li>Handle edge cases (duplicates, invalid references, etc.)</li>
+                        <li>Log important operations for debugging</li>
+                        <li>Test your endpoints with various input scenarios</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Section 7: Summary -->
+            <section>
+                <h2>7️⃣ Summary: Key Takeaways</h2>
+                
+                <div class="summary-box">
+                    <h3>What We Learned</h3>
+                    
+                    <h4>📌 GET vs POST</h4>
+                    <p>GET retrieves data via URL parameters, POST sends data in the request body to create resources. Choose based on your use case and data size.</p>
+                    
+                    <h4>📌 Request Bodies</h4>
+                    <p>Request bodies contain data sent to the server, typically as JSON. They're defined using Pydantic models that automatically validate and convert the data.</p>
+                    
+                    <h4>📌 Pydantic Validation</h4>
+                    <p>Pydantic validates data types, field constraints, and complex nested structures. Use Field() for advanced validation like min/max lengths and numeric ranges.</p>
+                    
+                    <h4>📌 Error Handling</h4>
+                    <p>Return appropriate HTTP status codes and error messages. FastAPI automatically handles validation errors (422), but you should handle business logic errors (409 conflict, 400 bad request).</p>
+                    
+                    <h4>📌 Complete Endpoints</h4>
+                    <p>Build endpoints by combining Pydantic models, validation logic, and proper status codes. Test thoroughly with various input scenarios.</p>
+                    
+                    <h4>📌 Real-World Patterns</h4>
+                    <p>Use bulk operations for multiple items, PATCH for partial updates, and response models to control what data is returned.</p>
+                    
+                    <h3>Next Session Preview</h3>
+                    <p>In Session 5, we'll take this knowledge and build an <strong>AI API</strong> that integrates with OpenAI. You'll learn how to:</p>
+                    <ul>
+                        <li>Connect FastAPI to external AI services</li>
+                        <li>Handle asynchronous API calls</li>
+                        <li>Manage API keys securely</li>
+                        <li>Build a summarization endpoint</li>
+                        <li>Implement cost-safe API usage</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>FastAPI Course | Session 4: Sending Data to APIs | ~120 minutes of content</p>
+            <p>© 2024 API Development with FastAPI. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
